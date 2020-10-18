@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="todo"
+            type="com.novyapp.dowittodolist.database.Todo" />
+
+        <variable
+            name="viewHolder"
+            type="com.novyapp.dowittodolist.main.TodosAdapter.TodoViewHolder" />
+
+        <variable
+            name="clickListener"
+            type="com.novyapp.dowittodolist.main.TodoClickListener" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:onClick="@{() -> clickListener.onClick(todo.todoId, viewHolder)}">
+
+        <ImageView
+            android:id="@+id/todo_icon"
+            android:layout_width="@dimen/icon_size"
+            android:layout_height="@dimen/icon_size"
+            android:layout_marginStart="8dp"
+            android:contentDescription="@string/content_description_checkbox"
+            android:paddingStart="@dimen/small"
+            android:paddingTop="0dp"
+            android:paddingEnd="@dimen/small"
+            android:paddingBottom="@dimen/small"
+            app:doneIcon="@{todo}"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/todo_task_text"
+            app:srcCompat="@drawable/ic_checkbox_unchecked"
+            tools:ignore="VectorDrawableCompat" />
+
+        <TextView
+            android:id="@+id/todo_task_text"
+            style="@style/todo_task"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="8dp"
+            app:layout_constraintBottom_toTopOf="@+id/todo_duedate_text"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/todo_icon"
+            app:layout_constraintTop_toTopOf="parent"
+            app:todoText="@{todo}"
+            tools:text="@string/exp_veryLongText" />
+
+        <TextView
+            android:id="@+id/todo_duedate_text"
+            style="@style/todo_due_date"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            app:dueDateText="@{todo}"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@+id/todo_task_text"
+            app:layout_constraintStart_toStartOf="@+id/todo_task_text"
+            app:layout_constraintTop_toBottomOf="@+id/todo_task_text"
+            tools:text="TextView" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

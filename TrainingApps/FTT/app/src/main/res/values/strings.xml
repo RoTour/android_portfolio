@@ -1,0 +1,25 @@
+<resources>
+    <string name="app_name">Fast Typing Training</string>
+    <string name="menu_1">menu_1</string>
+    <string name="menu_2">menu_2</string>
+    <string name="current_word">%s</string>
+    <string name="next_word">%s</string>
+    <string name="gameHint_editText">Type here</string>
+    <string name="play">Play</string>
+    <string name="appName">Fast Typing Training App</string>
+    <string name="timeRemaining">Time remaining: %ss</string>
+    <string name="score">Score: %d</string>
+    <string name="gameNotStarted">Start typing to start the game!</string>
+    <string name="results">Results:</string>
+    <string name="wordsPerMinutes">words/m</string>
+    <string name="titleScreenButton">Title Screen</string>
+    <string name="retry_button">Retry</string>
+    <string name="mainFragmentTitle">Welcome to FTTA</string>
+    <string name="gameFragmentTitle">Let\'s train !</string>
+    <string name="resultFragmentTitle">Were you fast ?</string>
+    <string name="loadingScreenText">Please wait a few seconds. The game is loading!</string>
+    <string name="contentDesc_AppLogo">Application Logo</string>
+    <string name="downloadingContent">Downloading the word list …</string>
+    <string name="processingData">Processing data …</string>
+    <string name="finished">Let\'s play !</string>
+</resources>

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    >
+
+    <item
+        android:id="@+id/resetDB"
+        android:title="@string/reset_database" />
+
+    <item
+        android:id="@+id/triggerJob"
+        android:title="@string/trigger_job"/>
+
+    <item
+        android:id="@+id/filter_option"
+        android:title="@string/toggle_filter_option"
+        android:icon="@drawable/ic_done"
+        app:showAsAction="ifRoom" />
+</menu>

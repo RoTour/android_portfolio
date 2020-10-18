@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/navigation.xml"
+    app:startDestination="@id/mainFragment">
+    <fragment
+        android:id="@+id/mainFragment"
+        android:name="com.novyapp.test.fasttypingtraining.ui.main.MainFragment"
+        android:label="MainFragment"
+        tools:layout="@layout/main_fragment">
+        <action
+            android:id="@+id/action_mainFragment_to_gameFragment"
+            app:destination="@id/gameFragment" />
+        <action
+            android:id="@+id/action_mainFragment_to_loadingFragment"
+            app:destination="@id/loadingFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/gameFragment"
+        android:name="com.novyapp.test.fasttypingtraining.ui.game.GameFragment"
+        android:label="GameFragment"
+        tools:layout="@layout/game_fragment">
+        <action
+            android:id="@+id/action_gameFragment_to_resultsFragment"
+            app:destination="@id/resultsFragment"
+            app:popUpTo="@id/mainFragment"
+            app:popUpToInclusive="false" />
+    </fragment>
+    <fragment
+        android:id="@+id/resultsFragment"
+        android:name="com.novyapp.test.fasttypingtraining.ui.results.ResultsFragment"
+        android:label="ResultsFragment"
+        tools:layout="@layout/results_fragment">
+        <action
+            android:id="@+id/action_resultsFragment_to_gameFragment"
+            app:destination="@id/gameFragment" />
+        <action
+            android:id="@+id/action_resultsFragment_to_mainFragment"
+            app:destination="@id/mainFragment" />
+        <argument
+            android:name="score"
+            app:argType="integer" />
+        <argument android:name="countdownTimeInMilli"
+            app:argType="long" />
+    </fragment>
+    <fragment
+        android:id="@+id/loadingFragment"
+        android:name="com.novyapp.test.fasttypingtraining.ui.loading.LoadingFragment"
+        android:label="LoadingFragment"
+        tools:layout="@layout/loading_screen_fragment">
+        <action
+            android:id="@+id/action_loadingFragment_to_gameFragment"
+            app:destination="@id/gameFragment"
+            app:popUpTo="@id/mainFragment"
+            app:popUpToInclusive="false" />
+    </fragment>
+</navigation>

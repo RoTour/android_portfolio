@@ -1,0 +1,14 @@
+<resources>
+    <string name="app_name">JobSchedulerCodelab</string>
+    <string name="newtwork_required">Network Type Required:</string>
+    <string name="none_network_option">None</string>
+    <string name="wifi_network_option">Wifi</string>
+    <string name="any_network_option">Any</string>
+    <string name="schedule_job">Schedule Job</string>
+    <string name="cancel_jobs">Cancel Jobs</string>
+    <string name="requires">Requires</string>
+    <string name="device_idle">Device Idle</string>
+    <string name="device_charging">Device Charging</string>
+    <string name="override_deadline">Override Deadline: </string>
+    <string name="not_set">Not Set</string>
+</resources>

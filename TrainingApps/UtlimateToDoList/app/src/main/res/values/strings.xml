@@ -1,0 +1,25 @@
+<resources>
+    <string name="app_name">UtlimateToDoList</string>
+    <string name="active_tasks_displayed">Active Tasks:</string>
+    <string name="task_title_hint">Your amazing task</string>
+    <string name="task_description_hint">Describe your app here</string>
+    <string name="titleIsEmpty">Please enter at least a title!</string>
+    <string name="delete_task_option">Delete this task</string>
+    <string name="delete_task_dialog_title">Are you sure?</string>
+    <string name="delete_task_dialog_message">Do you really want do delete this task?</string>
+    <string name="confirm">Yes</string>
+    <string name="cancel">Do not delete</string>
+    <string name="reminder_notification_title">HEY! LISTEN!</string>
+    <string name="reminder_notification_text">Don\'t forget the tasks you planned!</string>
+    <string name="reminder_notification_channel_name">Daily reminder</string>
+    <string name="reminder_notification_channel_description">Notifications that remind you to do your tasks</string>
+    <string name="reset_database">Reset Database</string>
+    <string name="trigger_job">Trigger job</string>
+    <string name="stats_fragment_title">Your stats:</string>
+    <string name="total_completed_tasks">Total completed tasks: %s</string>
+    <string name="errorLoadingStats">An error occured while loading the tasks</string>
+    <string name="statistics_menu_item">Statistics</string>
+    <string name="toggle_filter_option">Toggle Filter</string>
+    <string name="lets_go">Let\'s goooo</string>
+
+</resources>

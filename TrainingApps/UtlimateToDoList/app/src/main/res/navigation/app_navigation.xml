@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/app_navigation"
+    app:startDestination="@id/listDisplayFragment">
+
+    <fragment
+        android:id="@+id/listDisplayFragment"
+        android:name="com.novyapp.test.utlimatetodolist.ui.displaylist.ListDisplayFragment"
+        android:label="list_diplay_fragment"
+        tools:layout="@layout/list_diplay_fragment" >
+        <action
+            android:id="@+id/action_listDisplayFragment_to_taskDetailFragment"
+            app:destination="@id/taskDetailFragment" />
+        <action
+            android:id="@+id/action_listDisplayFragment_to_addOrEditFragment"
+            app:destination="@id/addOrEditFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/taskDetailFragment"
+        android:name="com.novyapp.test.utlimatetodolist.ui.detail.TaskDetailFragment"
+        android:label="TaskDetailFragment"
+        tools:layout="@layout/task_detail_fragment">
+        <argument
+            android:name="task"
+            app:argType="com.novyapp.test.utlimatetodolist.data.local.Task" />
+        <action
+            android:id="@+id/action_taskDetailFragment_to_addOrEditFragment"
+            app:destination="@id/addOrEditFragment"
+            app:popUpTo="@id/listDisplayFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/addOrEditFragment"
+        android:name="com.novyapp.test.utlimatetodolist.ui.addoredit.AddOrEditFragment"
+        android:label="AddOrEditFragment"
+        tools:layout="@layout/add_or_edit_fragment">
+        <argument
+            android:name="task"
+            app:argType="com.novyapp.test.utlimatetodolist.data.local.Task"
+            app:nullable="true"
+            android:defaultValue="@null" />
+        <action
+            android:id="@+id/action_addOrEditFragment_to_taskDetailFragment"
+            app:destination="@id/taskDetailFragment"
+            app:popUpTo="@id/listDisplayFragment" />
+        <action
+            android:id="@+id/action_addOrEditFragment_to_listDisplayFragment"
+            app:destination="@id/listDisplayFragment"
+            app:popUpTo="@id/listDisplayFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/statsFragment"
+        android:name="com.novyapp.test.utlimatetodolist.ui.stats.StatsFragment"
+        android:label="StatsFragment"
+        tools:layout="@layout/stats_fragment"/>
+    <fragment
+        android:id="@+id/testViewPagerFragment"
+        android:name="com.novyapp.test.utlimatetodolist.ui.testviewpager.TestViewPagerFragment"
+        android:label="TestViewPagerFragment"
+        tools:layout="@layout/test_fragment">
+        <action
+            android:id="@+id/action_testViewPagerFragment_to_taskDetailFragment"
+            app:destination="@id/taskDetailFragment" />
+    </fragment>
+</navigation>

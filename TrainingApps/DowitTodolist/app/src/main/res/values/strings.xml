@@ -1,0 +1,23 @@
+<resources>
+    <string name="app_name">DowitTodolist</string>
+
+    // Main Fragment
+    <string name="button1">AutoTodo</string>
+    <string name="button2">Clear Data</string>
+    <string name="cancel">UNDO</string>
+    <string name="favorite">favorite</string>
+    <string name="content_description_favorite">access to favorite</string>
+    <string name="addTodo">add a new todo</string>
+    <string name="content_description_addTodo">create a brand new todo</string>
+    <string name="more">more</string>
+    <string name="content_description_more">more menu</string>
+    <string name="about">about</string>
+    <string name="task_hint">Enter your task</string>
+    <string name="pick_date_button">Pick Date</string>
+    <string name="date_label_placerholder"><![CDATA[Please pick a date —>]]></string>
+    <string name="create_button">Create this todo !</string>
+    <string name="duedate_label">%1$d/%2$d/%3$d</string>
+    <string name="error_missing_values">Error: Some values are missing! </string>
+    <string name="exp_veryLongText">asdashnuiuiuiuiuiuiuiuiuiuiuiiasdasdnhdasuhndausidhasiuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuusdasddhasndsudhaisudnhaisudhnasiudhnasiudhnasuidnhaisunhdaiusdnhiasundhiasdhnauisdhniusdhadhansuihdni</string>
+    <string name="content_description_checkbox">CheckBox: when activated, remove the toddo from the list</string>
+</resources>

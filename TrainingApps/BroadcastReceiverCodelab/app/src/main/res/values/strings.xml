@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">BroadCastReceiverCodelab</string>
+    <string name="send_button">Send Custom Broadcast</string>
+</resources>
