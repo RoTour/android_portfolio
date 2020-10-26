@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout>
+    <data>
+        <variable
+            name="course"
+            type="com.novyapp.superplanning.data.Course" />
+        <variable
+            name="formattedDate"
+            type="String" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/course_subject"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="16dp"
+            android:text="@{course.component1()}"
+            android:textAppearance="@style/TextAppearance.AppCompat.Headline"
+            app:layout_constraintStart_toEndOf="@+id/course_date"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="Javascript" />
+
+        <TextView
+            android:id="@+id/course_teacher"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:text="@{course.component2()}"
+            android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
+            app:layout_constraintBaseline_toBaselineOf="@+id/course_date"
+            app:layout_constraintStart_toEndOf="@+id/course_date"
+            tools:text="ESCUDERO" />
+
+        <TextView
+            android:id="@+id/course_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
+            android:text="@{formattedDate}"
+            android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/course_subject"
+            tools:text="5/11/2020 08h30" />
+        <TextView
+            android:id="@+id/course_classroom"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="8dp"
+            android:text="@{course.component4()}"
+            app:layout_constraintStart_toEndOf="@+id/course_date"
+            app:layout_constraintTop_toBottomOf="@+id/course_teacher"
+            tools:text="TOU-003" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

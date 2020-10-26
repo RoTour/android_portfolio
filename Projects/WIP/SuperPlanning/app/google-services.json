@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "260872280581",
+    "firebase_url": "https://superplanning-d2f60.firebaseio.com",
+    "project_id": "superplanning-d2f60",
+    "storage_bucket": "superplanning-d2f60.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:260872280581:android:17c9ada129ceb056cc5a6c",
+        "android_client_info": {
+          "package_name": "com.novyapp.superplanning"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "260872280581-j8o856u24t47d39ckh2ppse8enjb0tku.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCO7KmeNbfNIKexiNOtaxFhbhtEdxynjWo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "260872280581-j8o856u24t47d39ckh2ppse8enjb0tku.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
