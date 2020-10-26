@@ -6,7 +6,7 @@ import com.novyapp.superplanning.data.FirebaseDataSource
 import java.lang.IllegalArgumentException
 
 class MainPageViewModel : ViewModel() {
-    val courses = FirebaseDataSource.getCoursesFromPromo("INFO-B1")
+    val courses = FirebaseDataSource.getCoursesFromPromo("INFO-B2")
 }
 
 class MainPageViewModelFactory(
