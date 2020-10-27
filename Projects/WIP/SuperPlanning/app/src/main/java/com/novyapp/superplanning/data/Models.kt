@@ -5,6 +5,8 @@ data class Course(
     var teacher: String = "",
     var date: String = "",
     var classroom: String = ""
-)
+) {
+
+}
 
 data class CourseListViews(val viewType: Int, val course: Course)

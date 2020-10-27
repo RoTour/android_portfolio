@@ -63,6 +63,7 @@ class CourseListAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
             sublist.forEach { course -> list.add(CourseListViews(COURSE_VIEW, course)) }
         }
 
+
         notifyDataSetChanged()
     }
 

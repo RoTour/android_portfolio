@@ -3,7 +3,7 @@ package com.novyapp.superplanning.ui.main
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
-import android.text.format.DateUtils
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -12,9 +12,11 @@ import androidx.fragment.app.viewModels
 import com.firebase.ui.auth.AuthUI
 import com.firebase.ui.auth.IdpResponse
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.ktx.Firebase
 import com.novyapp.superplanning.data.CourseListViews
 import com.novyapp.superplanning.data.FirebaseDataSource
 import com.novyapp.superplanning.databinding.MainPageFragmentBinding
+import com.novyapp.superplanning.toISOString
 import timber.log.Timber
 import java.util.*
 
@@ -42,6 +44,7 @@ class MainPage : Fragment() {
         val adapter = CourseListAdapter()
         binding.recyclerView.adapter = adapter
 
+
         viewModel.courses.observe(viewLifecycleOwner) {
             if(it.isNullOrEmpty()) Timber.i("Course list is Null or Empty")
             else {
@@ -51,7 +54,7 @@ class MainPage : Fragment() {
                 } as ArrayList<CourseListViews>)
 
 //                adapter.submitList(it)
-                Timber.i("List submitted")
+                Timber.i("List submitted to adapter")
             }
         }
 

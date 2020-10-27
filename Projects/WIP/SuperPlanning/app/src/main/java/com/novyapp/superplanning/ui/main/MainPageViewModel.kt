@@ -3,10 +3,14 @@ package com.novyapp.superplanning.ui.main
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.novyapp.superplanning.data.FirebaseDataSource
+import timber.log.Timber
 import java.lang.IllegalArgumentException
 
 class MainPageViewModel : ViewModel() {
-    val courses = FirebaseDataSource.getCoursesFromPromo("INFO-B2")
+    val courses = FirebaseDataSource.getCoursesFromPromo("INFO-B2",45)
+    init {
+        Timber.i("Init viewModel")
+    }
 }
 
 class MainPageViewModelFactory(
