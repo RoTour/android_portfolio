@@ -11,10 +11,12 @@ import com.novyapp.superplanning.data.Course
 import com.novyapp.superplanning.data.CourseListViews
 import com.novyapp.superplanning.databinding.CourseListItemBinding
 import com.novyapp.superplanning.databinding.CourseListSeparatorBinding
+import com.novyapp.superplanning.findNextIntBiggerThan
 import com.novyapp.superplanning.fromISOtoNice
 import timber.log.Timber
 import java.text.SimpleDateFormat
-import java.util.ArrayList
+import java.util.*
+import kotlin.collections.LinkedHashMap
 
 class CourseListAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
@@ -62,10 +64,25 @@ class CourseListAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
             list.add(CourseListViews(SEPARATOR_VIEW, Course(date = key)))
             sublist.forEach { course -> list.add(CourseListViews(COURSE_VIEW, course)) }
         }
-
-
         notifyDataSetChanged()
     }
+
+    fun submitList(data: LinkedHashMap<String, MutableList<Course>>){
+        list.clear()
+        val thisWeekNb = Calendar.getInstance().get(Calendar.WEEK_OF_YEAR).toString()
+        val orderedCourses: LinkedHashMap<String, MutableList<Course>> = LinkedHashMap()
+        data[findNextIntBiggerThan(thisWeekNb, data.keys)]?.forEach {course ->
+            val key = course.date.substring(0,10)
+            if(!orderedCourses.containsKey(key)) orderedCourses[key] = mutableListOf()
+            orderedCourses[key]!!.add(course)
+        }
+        orderedCourses.forEach { (key, sublist) ->
+            list.add(CourseListViews(SEPARATOR_VIEW, Course(date = key)))
+            sublist.forEach { course -> list.add(CourseListViews(COURSE_VIEW, course)) }
+        }
+        notifyDataSetChanged()
+    }
+
 
     class CourseListItemViewHolder private constructor(
             private val binding: CourseListItemBinding

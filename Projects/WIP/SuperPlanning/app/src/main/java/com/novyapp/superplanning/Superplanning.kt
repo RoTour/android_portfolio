@@ -10,7 +10,7 @@ class Superplanning : Application() {
     override fun onCreate() {
         super.onCreate()
         Timber.plant(Timber.DebugTree())
-        Firebase.database.setPersistenceEnabled(true)
+//        Firebase.database.setPersistenceEnabled(true)
 
     }
 }

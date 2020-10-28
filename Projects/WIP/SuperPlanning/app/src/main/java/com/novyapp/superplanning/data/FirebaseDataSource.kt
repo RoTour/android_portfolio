@@ -1,5 +1,6 @@
 package com.novyapp.superplanning.data
 
+import android.widget.Toast
 import java.util.Calendar
 import androidx.lifecycle.MutableLiveData
 import com.google.firebase.database.DataSnapshot
@@ -16,7 +17,7 @@ object FirebaseDataSource {
     private var database = Firebase.database.reference
 
 
-    fun getCoursesFromPromo(
+    fun getCoursesFromPromoByWeek(
             promo: String,
             week: Int = Calendar.getInstance().get(Calendar.WEEK_OF_YEAR)
     ): MutableLiveData<MutableList<Course>> {
@@ -44,6 +45,57 @@ object FirebaseDataSource {
         return result
     }
 
+//    fun getAllCoursesByPromo(promo: String): MutableLiveData<MutableList<Course>> {
+//        val result = MutableLiveData(mutableListOf<Course>())
+//        Timber.i("Fetching All Courses with promo = $promo")
+//
+//        database.child("courses")
+//                .child(promo)
+//                .addValueEventListener(object : ValueEventListener {
+//                    override fun onDataChange(snapshot: DataSnapshot) {
+//                        Timber.i("Snapshot: $snapshot")
+//                        val dataFetched = mutableListOf<Course>()
+//                        snapshot.children.forEach { dataSnapshot ->
+//                            dataSnapshot.children.forEach { course ->
+//                                val newCourse = course.getValue(Course::class.java)
+//                                newCourse?.let { dataFetched.add(it) }
+//                            }
+//                        }
+//                        Timber.i(dataFetched.toString())
+//                        result.value = dataFetched
+//                    }
+//
+//                    override fun onCancelled(error: DatabaseError) {
+//                        Timber.e(error.message)
+//                    }
+//                })
+//        return result
+//    }
+
+    fun getAllCoursesByPromo(promo: String): MutableLiveData<LinkedHashMap<String, MutableList<Course>>>{
+        val result = MutableLiveData(linkedMapOf<String, MutableList<Course>>())
+
+        database.child("courses")
+                .child(promo)
+                .addValueEventListener(object : ValueEventListener{
+                    override fun onDataChange(snapshot: DataSnapshot) {
+                        val toReturn = linkedMapOf<String, MutableList<Course>>()
+                        snapshot.children.forEach { week ->
+                            toReturn[week.key as String] = mutableListOf()
+                            week.children.forEach { course ->
+                                toReturn[week.key as String]!!.add(course.getValue(Course::class.java) ?: Course())
+                            }
+                        }
+                        Timber.i("Fetched data: $toReturn")
+                        result.value = toReturn
+                    }
+                    override fun onCancelled(error: DatabaseError) {
+                        Timber.i(error.message)
+                    }
+                })
+
+        return result
+    }
 
     fun addNewCourseToPromo(promo: String, subject: String, teacher: String, date: Calendar, classroom: String) {
         database.child("courses")

@@ -49,9 +49,10 @@ class MainPage : Fragment() {
             if(it.isNullOrEmpty()) Timber.i("Course list is Null or Empty")
             else {
                 it.forEach { item -> Timber.i(item.toString()) }
-                adapter.submitList(it.map { course ->
-                    CourseListViews(CourseListAdapter.COURSE_VIEW, course)
-                } as ArrayList<CourseListViews>)
+                adapter.submitList(it)
+//                adapter.submitList(it.map { course ->
+//                    CourseListViews(CourseListAdapter.COURSE_VIEW, course)
+//                } as ArrayList<CourseListViews>)
 
 //                adapter.submitList(it)
                 Timber.i("List submitted to adapter")

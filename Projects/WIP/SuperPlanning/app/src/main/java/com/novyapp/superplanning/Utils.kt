@@ -1,5 +1,6 @@
 package com.novyapp.superplanning
 
+import timber.log.Timber
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -25,6 +26,14 @@ fun String.fromISOtoCalendar(): Calendar {
             this.substring(14,16).toInt() // Min
     )
     return cal
+}
+
+fun findNextIntBiggerThan(number: String, keys: MutableSet<String>): String {
+    keys.forEach { key ->
+        if(key.toInt() >= number.toInt()) return key
+    }
+    Timber.e("ERROR IN findNextIntBiggerThan : provided number is greater than greatest value in provided set")
+    return "-1"
 }
 //fun CharSequence.fromISOtoNice(): String {
 //    return "${this.substring(0,3)}/${this.substring(5,6)}/${this.substring(7,8)}"

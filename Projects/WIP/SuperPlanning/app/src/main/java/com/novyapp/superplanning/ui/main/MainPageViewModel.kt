@@ -7,15 +7,25 @@ import timber.log.Timber
 import java.lang.IllegalArgumentException
 
 class MainPageViewModel : ViewModel() {
-    val courses = FirebaseDataSource.getCoursesFromPromo("INFO-B2",45)
+    //    val courses = {
+//        val thisWeek = Calendar.getInstance().get(Calendar.WEEK_OF_YEAR)
+//        val counter = 0
+//        while (counter < 10){
+//            FirebaseDataSource.getCoursesFromPromo("INFO-B2", thisWeek)
+//        }
+//    }
+//    val courses = FirebaseDataSource.getCoursesFromPromoByWeek("INFO-B2")
+    val courses = FirebaseDataSource.getAllCoursesByPromo("INFO-B2")
+
     init {
         Timber.i("Init viewModel")
     }
+
 }
 
 class MainPageViewModelFactory(
 
-) : ViewModelProvider.Factory{
+) : ViewModelProvider.Factory {
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
         @Suppress("UNCHECKED_CAST")
         if (modelClass.isAssignableFrom(MainPageViewModel::class.java))
