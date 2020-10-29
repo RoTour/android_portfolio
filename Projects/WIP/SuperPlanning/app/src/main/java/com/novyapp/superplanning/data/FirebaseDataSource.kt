@@ -1,7 +1,5 @@
 package com.novyapp.superplanning.data
 
-import android.widget.Toast
-import java.util.Calendar
 import androidx.lifecycle.MutableLiveData
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -11,6 +9,7 @@ import com.google.firebase.ktx.Firebase
 import com.novyapp.superplanning.fromISOtoCalendar
 import com.novyapp.superplanning.toISOString
 import timber.log.Timber
+import java.util.*
 
 object FirebaseDataSource {
 
@@ -72,6 +71,11 @@ object FirebaseDataSource {
 //        return result
 //    }
 
+    /**
+     *  Returns a LinkedHashMap where
+     *  LinkedHashMap at(WeekNumber) = mutable list of Courses this week
+     */
+
     fun getAllCoursesByPromo(promo: String): MutableLiveData<LinkedHashMap<String, MutableList<Course>>>{
         val result = MutableLiveData(linkedMapOf<String, MutableList<Course>>())
 
@@ -114,16 +118,9 @@ object FirebaseDataSource {
                 .setValue(Course(subject, teacher, date.toISOString(), classroom))
     }
 
-    fun updateCourse(promo: String, courseId: String, data: Course) {
-        database.child("courses").child(promo).child(courseId).setValue(data)
-    }
+//    fun updateCourse(promo: String, courseId: String, data: Course) {
+//        database.child("courses").child(promo).child(courseId).setValue(data)
+//    }
 
-    fun testPushList(promo: String) {
-        database.child("courses").child(promo).push().setValue(listOf(
-                Course("test1", "huon", "2020-10-26T08:30:00.000Z", "TOU-003"),
-                Course("test2", "huon", "2020-10-26T08:30:00.000Z", "TOU-003"),
-                Course("test3", "huon", "2020-10-26T08:30:00.000Z", "TOU-003")
-        ))
-    }
 
 }

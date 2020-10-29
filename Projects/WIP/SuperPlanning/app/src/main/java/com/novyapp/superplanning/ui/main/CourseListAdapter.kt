@@ -1,20 +1,13 @@
 package com.novyapp.superplanning.ui.main
 
-import android.opengl.Visibility
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import androidx.recyclerview.widget.DiffUtil
-import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.novyapp.superplanning.data.Course
 import com.novyapp.superplanning.data.CourseListViews
 import com.novyapp.superplanning.databinding.CourseListItemBinding
 import com.novyapp.superplanning.databinding.CourseListSeparatorBinding
-import com.novyapp.superplanning.findNextIntBiggerThan
 import com.novyapp.superplanning.fromISOtoNice
-import timber.log.Timber
-import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.LinkedHashMap
 
@@ -51,14 +44,46 @@ class CourseListAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         return list[position].viewType
     }
 
-    fun submitList(newList:  ArrayList<CourseListViews>){
+//    fun submitList(newList:  ArrayList<CourseListViews>){
+//        list.clear()
+//        val orderedCourses: LinkedHashMap<String, MutableList<Course>> = LinkedHashMap()
+//
+//        newList.forEach {
+//            val key = it.course.date.substring(0,10)
+//            if(!orderedCourses.containsKey(key)) orderedCourses[key] = mutableListOf()
+//            orderedCourses[key]!!.add(it.course)
+//        }
+//        orderedCourses.forEach { (key, sublist) ->
+//            list.add(CourseListViews(SEPARATOR_VIEW, Course(date = key)))
+//            sublist.forEach { course -> list.add(CourseListViews(COURSE_VIEW, course)) }
+//        }
+//        notifyDataSetChanged()
+//    }
+//
+//    fun submitList(data: LinkedHashMap<String, MutableList<Course>>){
+//        list.clear()
+//        val thisWeekNb = Calendar.getInstance().get(Calendar.WEEK_OF_YEAR).toString()
+//        val orderedCourses: LinkedHashMap<String, MutableList<Course>> = LinkedHashMap()
+//        data[findNextIntBiggerThan(thisWeekNb, data.keys)]?.forEach {course ->
+//            val key = course.date.substring(0,10)
+//            if(!orderedCourses.containsKey(key)) orderedCourses[key] = mutableListOf()
+//            orderedCourses[key]!!.add(course)
+//        }
+//        orderedCourses.forEach { (key, sublist) ->
+//            list.add(CourseListViews(SEPARATOR_VIEW, Course(date = key)))
+//            sublist.forEach { course -> list.add(CourseListViews(COURSE_VIEW, course)) }
+//        }
+//        notifyDataSetChanged()
+//    }
+
+    fun submitList(newList:  MutableList<Course>){
         list.clear()
         val orderedCourses: LinkedHashMap<String, MutableList<Course>> = LinkedHashMap()
 
         newList.forEach {
-            val key = it.course.date.substring(0,10)
+            val key = it.date.substring(0,10)
             if(!orderedCourses.containsKey(key)) orderedCourses[key] = mutableListOf()
-            orderedCourses[key]!!.add(it.course)
+            orderedCourses[key]!!.add(it)
         }
         orderedCourses.forEach { (key, sublist) ->
             list.add(CourseListViews(SEPARATOR_VIEW, Course(date = key)))
@@ -67,21 +92,7 @@ class CourseListAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         notifyDataSetChanged()
     }
 
-    fun submitList(data: LinkedHashMap<String, MutableList<Course>>){
-        list.clear()
-        val thisWeekNb = Calendar.getInstance().get(Calendar.WEEK_OF_YEAR).toString()
-        val orderedCourses: LinkedHashMap<String, MutableList<Course>> = LinkedHashMap()
-        data[findNextIntBiggerThan(thisWeekNb, data.keys)]?.forEach {course ->
-            val key = course.date.substring(0,10)
-            if(!orderedCourses.containsKey(key)) orderedCourses[key] = mutableListOf()
-            orderedCourses[key]!!.add(course)
-        }
-        orderedCourses.forEach { (key, sublist) ->
-            list.add(CourseListViews(SEPARATOR_VIEW, Course(date = key)))
-            sublist.forEach { course -> list.add(CourseListViews(COURSE_VIEW, course)) }
-        }
-        notifyDataSetChanged()
-    }
+
 
 
     class CourseListItemViewHolder private constructor(
@@ -107,7 +118,7 @@ class CourseListAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     class CourseListSeparatorViewHolder private constructor(
             private val binding: CourseListSeparatorBinding
     ): RecyclerView.ViewHolder(binding.root) {
-        private val simpleDateFormat = SimpleDateFormat.getDateInstance()
+//        private val simpleDateFormat = SimpleDateFormat.getDateInstance()
         fun bind(item: Course?){
             item?.let {
 //                binding.separatorDate = simpleDateFormat.format(item.date)
@@ -122,17 +133,6 @@ class CourseListAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
                 return CourseListSeparatorViewHolder(binding)
             }
         }
-    }
-
-}
-
-class DiffCallbacks : DiffUtil.ItemCallback<Course>() {
-    override fun areItemsTheSame(oldItem: Course, newItem: Course): Boolean {
-        return oldItem == newItem
-    }
-
-    override fun areContentsTheSame(oldItem: Course, newItem: Course): Boolean {
-        return oldItem == newItem
     }
 
 }

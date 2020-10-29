@@ -3,30 +3,20 @@ package com.novyapp.superplanning.ui.main
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.firebase.ui.auth.AuthUI
 import com.firebase.ui.auth.IdpResponse
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.ktx.Firebase
-import com.novyapp.superplanning.data.CourseListViews
-import com.novyapp.superplanning.data.FirebaseDataSource
 import com.novyapp.superplanning.databinding.MainPageFragmentBinding
-import com.novyapp.superplanning.toISOString
 import timber.log.Timber
-import java.util.*
 
 private const val REQUEST_CODE = 12
 
 class MainPage : Fragment() {
-
-    companion object {
-        fun newInstance() = MainPage()
-    }
 
     private lateinit var binding: MainPageFragmentBinding
     private val viewModel by viewModels<MainPageViewModel> {
@@ -41,8 +31,9 @@ class MainPage : Fragment() {
         if (FirebaseAuth.getInstance().currentUser == null) launchSignInFlow()
 
 
-        val adapter = CourseListAdapter()
-        binding.recyclerView.adapter = adapter
+        val adapter = ViewPagerAdapter()
+        binding.viewPager.adapter = adapter
+
 
 
         viewModel.courses.observe(viewLifecycleOwner) {

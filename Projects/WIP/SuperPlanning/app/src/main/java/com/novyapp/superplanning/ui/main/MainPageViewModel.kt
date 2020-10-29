@@ -23,9 +23,7 @@ class MainPageViewModel : ViewModel() {
 
 }
 
-class MainPageViewModelFactory(
-
-) : ViewModelProvider.Factory {
+class MainPageViewModelFactory : ViewModelProvider.Factory {
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
         @Suppress("UNCHECKED_CAST")
         if (modelClass.isAssignableFrom(MainPageViewModel::class.java))
