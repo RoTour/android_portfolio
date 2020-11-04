@@ -93,11 +93,8 @@ object FirebaseDataSource {
                         Timber.i("Fetched data: $toReturn")
                         result.value = toReturn
                     }
-                    override fun onCancelled(error: DatabaseError) {
-                        Timber.i(error.message)
-                    }
+                    override fun onCancelled(error: DatabaseError) { Timber.i(error.message) }
                 })
-
         return result
     }
 

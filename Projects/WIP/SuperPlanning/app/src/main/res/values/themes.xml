@@ -15,4 +15,9 @@
         <item name="fontFamily">@font/roboto_medium</item>
         <!-- Customize your theme here. -->
     </style>
+
+    <style name="separator">
+        <item name="background">@color/separator_background_light</item>
+        <item name="android:background">@color/separator_background_light</item>
+    </style>
 </resources>
