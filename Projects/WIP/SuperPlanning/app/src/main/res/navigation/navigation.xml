@@ -3,11 +3,16 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/navigation"
-    app:startDestination="@id/mainPage">
+    app:startDestination="@id/timetable">
 
     <fragment
-        android:id="@+id/mainPage"
+        android:id="@+id/timetable"
         android:name="com.novyapp.superplanning.ui.main.MainPage"
         android:label="MainPage"
         tools:layout="@layout/main_page_fragment"/>
+    <fragment
+        android:id="@+id/addCourse"
+        android:name="com.novyapp.superplanning.ui.addcourse.AddCourseFragment"
+        android:label="@string/addCourse_fragmentLabel"
+        tools:layout="@layout/add_course_fragment" />
 </navigation>

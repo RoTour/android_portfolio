@@ -1,4 +1,13 @@
 <resources>
     <string name="app_name">SuperPlanning</string>
     <string name="your_courses">Your courses:</string>
+    <string name="timetable_drawerItem">Timetable</string>
+    <string name="addCourse_tableItem">Add Course</string>
+    <string name="addCourse_fragmentLabel">Add Course</string>
+    <string name="subject_hint">Subject…</string>
+    <string name="professor_hint">Professor…</string>
+    <string name="classroom_hint">Classroom…</string>
+    <string name="datepicker_button">Pick a date</string>
+    <string name="validate_button">CREATE</string>
+    <string name="promotion_hint">Promotion…</string>
 </resources>
