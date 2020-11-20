@@ -74,6 +74,8 @@ object FirebaseDataSource {
     /**
      *  Returns a LinkedHashMap where
      *  LinkedHashMap at(WeekNumber) = mutable list of Courses this week
+     *
+     *  ==> LinkedHashMap<{WeekNumber},{listOfCourses}>
      */
 
     fun getAllCoursesByPromo(promo: String): MutableLiveData<LinkedHashMap<String, MutableList<Course>>>{

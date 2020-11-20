@@ -2,9 +2,14 @@ package com.novyapp.superplanning.ui.addcourse
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import java.lang.IllegalArgumentException
 
 class AddCourseViewModel : ViewModel() {
+    var subject: String = ""
+    var professor: String = ""
+    var promotion: String = ""
+    var classroom: String = ""
+    var date: String = ""
+
 
 }
 class AddCourseViewModelFactory : ViewModelProvider.Factory {
