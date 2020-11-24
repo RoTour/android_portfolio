@@ -6,7 +6,9 @@ import androidx.lifecycle.ViewModelProvider
 import com.google.firebase.Timestamp
 import com.novyapp.superplanning.data.CourseV2
 import com.novyapp.superplanning.data.FirebaseDataSource
+import com.novyapp.superplanning.data.Result
 import timber.log.Timber
+import java.lang.Exception
 import java.util.*
 
 class AddCourseViewModel : ViewModel() {
@@ -18,12 +20,12 @@ class AddCourseViewModel : ViewModel() {
     var day: Calendar? = null
     var time: Date? = null
 
-    var uploadResult: MutableLiveData<String> = MutableLiveData()
+    var uploadResult: MutableLiveData<Result<String>> = MutableLiveData()
 
     fun saveNewCourse() {
         if (checkInputsEmpty()){
             Timber.i("upload: save aborted on field is empty")
-            uploadResult.value = "Please fill every field."
+            uploadResult.value = Result.Error(Exception("Error: A field is'nt filled correctly"))
             return
         }
         Timber.i("upload: day = $day")
@@ -32,7 +34,7 @@ class AddCourseViewModel : ViewModel() {
 
         Timber.i("upload: timestamp = ${timestamp.toDate()}")
         val newCourse = CourseV2(timestamp, professor, subject, classroom)
-        uploadResult = FirebaseDataSource.addCourseToPromo(newCourse)
+        FirebaseDataSource.addCourseToPromo(course = newCourse, resultLiveData = uploadResult)
     }
 
     private fun checkInputsEmpty(): Boolean {

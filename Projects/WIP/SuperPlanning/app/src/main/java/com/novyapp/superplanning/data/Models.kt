@@ -2,6 +2,7 @@ package com.novyapp.superplanning.data
 
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.DocumentSnapshot
+import java.lang.Exception
 
 data class Course(
     var subject: String = "",
@@ -31,4 +32,16 @@ fun DocumentSnapshot.toCourseV2(): CourseV2{
         this.data?.get("subject") as String,
         this.data?.get("classroom") as String
     )
+}
+
+sealed class Result<out R> {
+    data class Success<out T>(val data: T) : Result<T>()
+    data class Error(val exception: Exception) : Result<Nothing>()
+
+    override fun toString(): String {
+        return when (this) {
+            is Success -> "Success[data=$data]"
+            is Error -> "Error[e=$exception]"
+        }
+    }
 }

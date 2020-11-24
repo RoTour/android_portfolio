@@ -10,6 +10,7 @@ import android.widget.Toast
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import com.novyapp.superplanning.data.Result
 import com.novyapp.superplanning.databinding.AddCourseFragmentBinding
 import timber.log.Timber
 import java.util.*
@@ -29,7 +30,7 @@ class AddCourseFragment : Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = AddCourseFragmentBinding.inflate(inflater, container, false)
 
         setInputsListeners()
@@ -39,7 +40,8 @@ class AddCourseFragment : Fragment() {
         binding.createCourseButton.setOnClickListener { createCourseWithInputs() }
 
         viewModel.uploadResult.observe(viewLifecycleOwner) {
-            Toast.makeText(requireContext(), it, Toast.LENGTH_LONG).show()
+            val msg = if (it is Result.Success) it.data else (it as Result.Error).exception.message
+            Toast.makeText(requireContext(), msg, Toast.LENGTH_LONG).show()
         }
 
         return binding.root
