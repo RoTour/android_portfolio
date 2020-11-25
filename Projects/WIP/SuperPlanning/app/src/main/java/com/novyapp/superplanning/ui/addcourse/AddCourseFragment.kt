@@ -3,6 +3,7 @@ package com.novyapp.superplanning.ui.addcourse
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
 import android.os.Bundle
+import android.text.Editable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,9 +18,9 @@ import java.util.*
 
 class AddCourseFragment : Fragment() {
 
-    companion object {
+//    companion object {
 //        fun newInstance() = AddCourseFragment()
-    }
+//    }
 
     private lateinit var binding: AddCourseFragmentBinding
     private val viewModel by viewModels<AddCourseViewModel> {
@@ -32,6 +33,7 @@ class AddCourseFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         binding = AddCourseFragmentBinding.inflate(inflater, container, false)
+        binding.loadingLayout.visibility = View.GONE
 
         setInputsListeners()
 
@@ -40,11 +42,29 @@ class AddCourseFragment : Fragment() {
         binding.createCourseButton.setOnClickListener { createCourseWithInputs() }
 
         viewModel.uploadResult.observe(viewLifecycleOwner) {
-            val msg = if (it is Result.Success) it.data else (it as Result.Error).exception.message
-            Toast.makeText(requireContext(), msg, Toast.LENGTH_LONG).show()
+            if (it is Result.Loading){
+                binding.formLayout.visibility = View.GONE
+                binding.loadingLayout.visibility = View.VISIBLE
+            } else {
+                binding.loadingLayout.visibility = View.GONE
+                binding.formLayout.visibility = View.VISIBLE
+                val msg = if (it is Result.Success){
+                    reset()
+                    it.data
+                } else (it as Result.Error).exception.message
+                Toast.makeText(requireContext(), msg, Toast.LENGTH_LONG).show()
+            }
         }
 
         return binding.root
+    }
+
+    private fun reset() {
+        viewModel.resetInputs()
+        binding.subjectEditText.text = Editable.Factory().newEditable("")
+        binding.classroomEditText.text = Editable.Factory().newEditable("")
+        binding.promotionEditText.text = Editable.Factory().newEditable("")
+        binding.professorEditText.text = Editable.Factory().newEditable("")
     }
 
 
@@ -56,11 +76,11 @@ class AddCourseFragment : Fragment() {
         binding.classroomEditText.addTextChangedListener {
             it?.let { viewModel.classroom = it.toString() } ?: run { viewModel.classroom = "" }
         }
-        binding.professorEditText.addTextChangedListener {
-            it?.let { viewModel.professor = it.toString() } ?: run { viewModel.professor = "" }
-        }
         binding.promotionEditText.addTextChangedListener {
             it?.let { viewModel.promotion = it.toString() } ?: run { viewModel.promotion = "" }
+        }
+        binding.professorEditText.addTextChangedListener {
+            it?.let { viewModel.professor = it.toString() } ?: run { viewModel.professor = "" }
         }
     }
 
@@ -78,6 +98,8 @@ class AddCourseFragment : Fragment() {
                         .apply { set(year1, monthOfYear, dayOfMonth) }
 
                 showTimePicker()
+                binding.datePreviewValueTextView.text =
+                    android.text.format.DateFormat.format("yyyy-MM-dd", viewModel.day!!)
             }, year, month, day
         )
 
@@ -101,6 +123,8 @@ class AddCourseFragment : Fragment() {
                             )
                         }.timeInMillis
                 )
+                binding.timePreviewValueTextView.text =
+                    android.text.format.DateFormat.format("hh:mm", viewModel.time!!)
             },
             now.get(Calendar.HOUR),
             now.get(Calendar.MINUTE),
@@ -109,6 +133,7 @@ class AddCourseFragment : Fragment() {
     }
 
     private fun createCourseWithInputs() {
+        viewModel.checkInputsEmpty()
         Timber.i("upload: create button clicked")
         viewModel.saveNewCourse()
     }

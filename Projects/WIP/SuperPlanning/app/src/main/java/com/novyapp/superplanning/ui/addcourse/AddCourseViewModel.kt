@@ -23,23 +23,25 @@ class AddCourseViewModel : ViewModel() {
     var uploadResult: MutableLiveData<Result<String>> = MutableLiveData()
 
     fun saveNewCourse() {
-        if (checkInputsEmpty()){
-            Timber.i("upload: save aborted on field is empty")
-            uploadResult.value = Result.Error(Exception("Error: A field is'nt filled correctly"))
-            return
-        }
-        Timber.i("upload: day = $day")
-        Timber.i("upload: time = $time")
-        val timestamp = Timestamp(time!!.time/1000,0)
+        if(checkInputsEmpty()) return
 
-        Timber.i("upload: timestamp = ${timestamp.toDate()}")
+        val timestamp = Timestamp(time!!.time/1000,0)
         val newCourse = CourseV2(timestamp, professor, subject, classroom)
+        Timber.i("upload: timestamp = ${timestamp.toDate()}")
         FirebaseDataSource.addCourseToPromo(course = newCourse, resultLiveData = uploadResult)
+        uploadResult.value = Result.Loading()
     }
 
-    private fun checkInputsEmpty(): Boolean {
-        return (subject.isEmpty() || professor.isEmpty() || promotion.isEmpty() ||
-                classroom.isEmpty() || day == null || time == null)
+    fun checkInputsEmpty(): Boolean {
+        return if (subject.isEmpty() || professor.isEmpty() || promotion.isEmpty() || classroom.isEmpty() || day == null || time == null) {
+            Timber.i("upload: save aborted because at least a field is empty.")
+            uploadResult.value = Result.Error(Exception("Error: A field isn't filled correctly"))
+            true
+        } else false
+    }
+
+    fun resetInputs() {
+        professor = ""; promotion =""; classroom = ""; day = null; time = null
     }
 }
 

@@ -36,11 +36,13 @@ fun DocumentSnapshot.toCourseV2(): CourseV2{
 
 sealed class Result<out R> {
     data class Success<out T>(val data: T) : Result<T>()
+    data class Loading(val message: String = "Loading"): Result<Nothing>()
     data class Error(val exception: Exception) : Result<Nothing>()
 
     override fun toString(): String {
         return when (this) {
             is Success -> "Success[data=$data]"
+            is Loading -> "Loading[$message]"
             is Error -> "Error[e=$exception]"
         }
     }
