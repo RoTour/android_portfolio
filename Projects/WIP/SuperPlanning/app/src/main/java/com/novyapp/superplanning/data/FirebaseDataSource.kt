@@ -5,6 +5,7 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
+import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import timber.log.Timber
@@ -70,6 +71,30 @@ object FirebaseDataSource {
                 Timber.i("upload: FAILURE")
             }
 
+    }
+
+    fun getDistinctSubjects(): MutableLiveData<Result<List<String>>>{
+        Timber.i("distinct: In Function")
+        val toReturn = MutableLiveData<Result<List<String>>>()
+
+//        db.collection("/Courses/")
+//            .whereEqualTo("Weeks/")
+//            .get()
+//            .addOnSuccessListener {promoList ->
+//                Timber.i("distinct: In Success")
+//                promoList.documents.forEach {promo ->
+//                    promo.data?.forEach { (t, u) ->
+//                        Timber.i("distinct: key:$t \n value:$u")
+//                    }
+//                    Timber.i("distinct: ${promo["Weeks"]}")
+//                }
+//            }
+//            .addOnFailureListener {
+//                Timber.i("distinct: $it")
+//                toReturn.value = Result.Error(it)
+//            }
+
+        return toReturn
     }
 
 

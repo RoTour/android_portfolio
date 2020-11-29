@@ -7,13 +7,16 @@ import android.text.Editable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import com.novyapp.superplanning.R
 import com.novyapp.superplanning.data.Result
 import com.novyapp.superplanning.databinding.AddCourseFragmentBinding
 import timber.log.Timber
+import java.text.DateFormat
 import java.util.*
 
 class AddCourseFragment : Fragment() {
@@ -42,13 +45,13 @@ class AddCourseFragment : Fragment() {
         binding.createCourseButton.setOnClickListener { createCourseWithInputs() }
 
         viewModel.uploadResult.observe(viewLifecycleOwner) {
-            if (it is Result.Loading){
+            if (it is Result.Loading) {
                 binding.formLayout.visibility = View.GONE
                 binding.loadingLayout.visibility = View.VISIBLE
             } else {
                 binding.loadingLayout.visibility = View.GONE
                 binding.formLayout.visibility = View.VISIBLE
-                val msg = if (it is Result.Success){
+                val msg = if (it is Result.Success) {
                     reset()
                     it.data
                 } else (it as Result.Error).exception.message
@@ -61,7 +64,7 @@ class AddCourseFragment : Fragment() {
 
     private fun reset() {
         viewModel.resetInputs()
-        binding.subjectEditText.text = Editable.Factory().newEditable("")
+//        binding.subjectEditText.text = Editable.Factory().newEditable("")
         binding.classroomEditText.text = Editable.Factory().newEditable("")
         binding.promotionEditText.text = Editable.Factory().newEditable("")
         binding.professorEditText.text = Editable.Factory().newEditable("")
@@ -70,9 +73,12 @@ class AddCourseFragment : Fragment() {
 
     // Ugly code
     private fun setInputsListeners() {
-        binding.subjectEditText.addTextChangedListener {
-            it?.let { viewModel.subject = it.toString() } ?: run { viewModel.subject = "" }
-        }
+        binding.subjectSpinner.adapter = ArrayAdapter<String>(
+            requireContext(),
+            R.layout.spinner_item,
+            arrayOf("Hello", "Bonjour", "My name is glass joe")
+        )
+
         binding.classroomEditText.addTextChangedListener {
             it?.let { viewModel.classroom = it.toString() } ?: run { viewModel.classroom = "" }
         }
@@ -99,7 +105,8 @@ class AddCourseFragment : Fragment() {
 
                 showTimePicker()
                 binding.datePreviewValueTextView.text =
-                    android.text.format.DateFormat.format("yyyy-MM-dd", viewModel.day!!)
+                    DateFormat.getDateInstance(DateFormat.LONG)
+                        .format(Date(viewModel.day!!.timeInMillis))
             }, year, month, day
         )
 
@@ -111,8 +118,7 @@ class AddCourseFragment : Fragment() {
         TimePickerDialog(
             requireContext(),
             { _, hourOfDay, minute ->
-                viewModel.time = Date(
-                    Calendar.getInstance()
+                viewModel.time = Date(Calendar.getInstance()
                         .apply {
                             set(
                                 viewModel.day!!.get(Calendar.YEAR),
@@ -124,7 +130,8 @@ class AddCourseFragment : Fragment() {
                         }.timeInMillis
                 )
                 binding.timePreviewValueTextView.text =
-                    android.text.format.DateFormat.format("hh:mm", viewModel.time!!)
+//                    android.text.format.DateFormat.format("hh:mm", viewModel.time!!)
+                DateFormat.getTimeInstance(DateFormat.SHORT).format(viewModel.time!!)
             },
             now.get(Calendar.HOUR),
             now.get(Calendar.MINUTE),
