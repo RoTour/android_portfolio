@@ -28,7 +28,7 @@ class AddCourseViewModel : ViewModel() {
         val timestamp = Timestamp(time!!.time/1000,0)
         val newCourse = CourseV2(timestamp, professor, subject, classroom)
         Timber.i("upload: timestamp = ${timestamp.toDate()}")
-        FirebaseDataSource.addCourseToPromo(course = newCourse, resultLiveData = uploadResult)
+        FirebaseDataSource.addCourseToPromo(newCourse, promotion, uploadResult)
         uploadResult.value = Result.Loading()
     }
 

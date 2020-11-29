@@ -1,10 +1,12 @@
 package com.novyapp.superplanning.data
 
 import androidx.lifecycle.MutableLiveData
+import com.google.firebase.Timestamp
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
+import com.google.firebase.firestore.SetOptions
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import timber.log.Timber
@@ -53,25 +55,37 @@ object FirebaseDataSource {
      * @param course should be checked before this function
      */
     fun addCourseToPromo(
-        course: CourseV2, promo: String = "TestPromo", resultLiveData: MutableLiveData<Result<String>>
-    ){
+        course: CourseV2,
+        promo: String = "TestPromo",
+        resultLiveData: MutableLiveData<Result<String>>
+    ) {
         val weekNumber = Calendar.getInstance()
             .also { it.timeInMillis = course.date!!.seconds * 1000 }
             .get(Calendar.WEEK_OF_YEAR)
 
-        db.collection("/Courses/$promo/Weeks/$weekNumber/planning")
-            .add(course)
+        db.collection("Courses").document(promo)
+            .set(mapOf("updated_at" to Timestamp(Date())), SetOptions.merge())
             .addOnSuccessListener {
-                resultLiveData.value = Result.Success("Course added successfully")
-                Timber.i("upload: SUCCESS")
+
+                db.collection("/Courses/$promo/$weekNumber")
+                    .add(course)
+                    .addOnSuccessListener {
+                        resultLiveData.value = Result.Success("Course added successfully")
+                        Timber.i("upload: SUCCESS")
+                    }
+                    .addOnFailureListener { e ->
+                        resultLiveData.value = Result.Error(e)
+                        Timber.i("upload: FAILURE: $e")
+                    }
+
             }
             .addOnFailureListener { e ->
                 resultLiveData.value = Result.Error(e)
-                Timber.i("upload: FAILURE")
+                Timber.i("upload: FAILURE: $e")
             }
 
-    }
 
+    }
 
 
 }
