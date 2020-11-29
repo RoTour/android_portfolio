@@ -63,9 +63,30 @@ object FirebaseDataSource {
             .also { it.timeInMillis = course.date!!.seconds * 1000 }
             .get(Calendar.WEEK_OF_YEAR)
 
+//        requestDocument("Courses", promo, {
+//            requestDocument("Types", "data", {
+//                requestCollection("/Courses/$promo/$weekNumber", {
+//                    resultLiveData.value = Result.Success("Course added successfully")
+//                    Timber.i("upload: SUCCESS")
+//                }, { e -> returnException(resultLiveData, e) })
+//            }, { e -> returnException(resultLiveData, e) })
+//        }, { e -> returnException(resultLiveData, e) }, mapOf("updated_at" to Timestamp(Date())))
+
+//        , mapOf("data2" to listOf("Hola", "Quetal"))
+
         db.collection("Courses").document(promo)
-            .set(mapOf("updated_at" to Timestamp(Date())), SetOptions.merge())
+
+            .set(
+                mapOf("updated_at" to Timestamp(Date())),
+                SetOptions.merge()
+            ) // Used to create the document if not exists
             .addOnSuccessListener {
+
+//                db.collection("Types").document()
+//                    .get()
+//                    .addOnSuccessListener {
+//
+//                    }
 
                 db.collection("/Courses/$promo/$weekNumber")
                     .add(course)
@@ -87,5 +108,45 @@ object FirebaseDataSource {
 
     }
 
+    fun getDistinctSubjects(): MutableLiveData<MutableList<String>> {
+        val subjects = MutableLiveData<MutableList<String>>()
+
+        db.collection("Courses")
+            .get()
+            .addOnSuccessListener { result ->
+                Timber.i("spinner: ${result}")
+            }
+            .addOnFailureListener {
+                Timber.i("spinner: Failure: $it")
+            }
+
+        return subjects
+    }
+
+    private fun requestCollection(collPath: String, onSuccess: () -> Unit, onFailure: (e: Exception) -> Unit) {
+
+    }
+
+    private fun requestDocument(
+        collPath: String,
+        doc: String,
+        onSuccess: (Any) -> Unit,
+        onFailure: (e: Exception) -> Unit,
+        data: Map<Any, Any>? = null,
+    ) {
+        val request = db.collection(collPath).document(doc)
+        val result =
+            if (data == null) request.get()
+            else request.set(data, SetOptions.merge())
+
+        result
+            .addOnSuccessListener(onSuccess)
+            .addOnFailureListener(onFailure)
+    }
+
+    private fun returnException(resultLiveData: MutableLiveData<Result<String>>, e: Exception) {
+        resultLiveData.value = Result.Error(e)
+        Timber.i("upload: FAILURE: $e")
+    }
 
 }

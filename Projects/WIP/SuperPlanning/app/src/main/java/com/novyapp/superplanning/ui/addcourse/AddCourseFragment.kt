@@ -79,6 +79,8 @@ class AddCourseFragment : Fragment() {
             arrayOf("Hello", "Bonjour", "My name is glass joe")
         )
 
+        viewModel.subject = "Javascript"
+
         binding.classroomEditText.addTextChangedListener {
             it?.let { viewModel.classroom = it.toString() } ?: run { viewModel.classroom = "" }
         }
