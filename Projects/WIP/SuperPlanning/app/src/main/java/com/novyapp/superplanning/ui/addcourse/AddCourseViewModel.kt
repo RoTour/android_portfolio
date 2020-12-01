@@ -20,7 +20,7 @@ class AddCourseViewModel : ViewModel() {
     var day: Calendar? = null
     var time: Date? = null
 
-    var distinctCourse = FirebaseDataSource.getDistinctSubjects()
+    var spinnersData = FirebaseDataSource.getDistinctSubjects()
 
     var uploadResult: MutableLiveData<Result<String>> = MutableLiveData()
 

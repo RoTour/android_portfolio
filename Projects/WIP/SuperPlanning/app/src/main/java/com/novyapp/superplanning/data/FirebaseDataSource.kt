@@ -1,16 +1,19 @@
 package com.novyapp.superplanning.data
 
 import androidx.lifecycle.MutableLiveData
+import com.google.common.base.Ascii.toUpperCase
 import com.google.firebase.Timestamp
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.SetOptions
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import timber.log.Timber
 import java.util.*
+import kotlin.collections.HashMap
 
 object FirebaseDataSource {
 
@@ -75,55 +78,56 @@ object FirebaseDataSource {
 //        , mapOf("data2" to listOf("Hola", "Quetal"))
 
         db.collection("Courses").document(promo)
-
             .set(
                 mapOf("updated_at" to Timestamp(Date())),
                 SetOptions.merge()
             ) // Used to create the document if not exists
             .addOnSuccessListener {
-
-//                db.collection("Types").document()
-//                    .get()
-//                    .addOnSuccessListener {
-//
-//                    }
-
-                db.collection("/Courses/$promo/$weekNumber")
-                    .add(course)
+                db.collection("Types").document("data")
+                    .update(
+                        "Professors", FieldValue.arrayUnion(toUpperCase(course.professor!!)),
+                        "Classrooms", FieldValue.arrayUnion(toUpperCase(course.classroom!!)),
+                        "Subjects", FieldValue.arrayUnion(course.subject!!),
+                        "Promotions", FieldValue.arrayUnion(toUpperCase(promo)),
+                    )
                     .addOnSuccessListener {
-                        resultLiveData.value = Result.Success("Course added successfully")
-                        Timber.i("upload: SUCCESS")
+                        db.collection("/Courses/$promo/$weekNumber")
+                            .add(course)
+                            .addOnSuccessListener {
+                                resultLiveData.value = Result.Success("Course added successfully")
+                                Timber.i("upload: SUCCESS")
+                            }
+                            .addOnFailureListener { e -> returnException(resultLiveData, e)}
                     }
-                    .addOnFailureListener { e ->
-                        resultLiveData.value = Result.Error(e)
-                        Timber.i("upload: FAILURE: $e")
-                    }
-
+                    .addOnFailureListener { e -> returnException(resultLiveData, e) }
             }
-            .addOnFailureListener { e ->
-                resultLiveData.value = Result.Error(e)
-                Timber.i("upload: FAILURE: $e")
-            }
+            .addOnFailureListener { e -> returnException(resultLiveData, e) }
 
 
     }
 
-    fun getDistinctSubjects(): MutableLiveData<MutableList<String>> {
-        val subjects = MutableLiveData<MutableList<String>>()
+    fun testFunction() {
 
-        db.collection("Courses")
+    }
+
+    fun getDistinctSubjects(): MutableLiveData<Map<String, Any>> {
+        val subjects = MutableLiveData<Map<String, Any>>()
+
+        db.collection("Types").document("data")
             .get()
             .addOnSuccessListener { result ->
-                Timber.i("spinner: ${result}")
+                result.data.let { subjects.value = it }
             }
-            .addOnFailureListener {
-                Timber.i("spinner: Failure: $it")
-            }
+            .addOnFailureListener { subjects.value = mapOf() }
 
         return subjects
     }
 
-    private fun requestCollection(collPath: String, onSuccess: () -> Unit, onFailure: (e: Exception) -> Unit) {
+    private fun requestCollection(
+        collPath: String,
+        onSuccess: () -> Unit,
+        onFailure: (e: Exception) -> Unit
+    ) {
 
     }
 

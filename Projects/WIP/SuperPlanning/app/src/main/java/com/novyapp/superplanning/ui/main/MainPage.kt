@@ -16,6 +16,7 @@ import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.ktx.Firebase
 import com.novyapp.superplanning.data.CourseV2
+import com.novyapp.superplanning.data.FirebaseDataSource
 import com.novyapp.superplanning.data.toCourseV2
 import com.novyapp.superplanning.databinding.MainPageFragmentBinding
 import timber.log.Timber

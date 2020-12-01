@@ -18,6 +18,7 @@ import com.novyapp.superplanning.databinding.AddCourseFragmentBinding
 import timber.log.Timber
 import java.text.DateFormat
 import java.util.*
+import kotlin.collections.ArrayList
 
 class AddCourseFragment : Fragment() {
 
@@ -59,6 +60,17 @@ class AddCourseFragment : Fragment() {
             }
         }
 
+        viewModel.spinnersData.observe(viewLifecycleOwner) {
+            if(it.isNotEmpty()){
+                binding.subjectSpinner.adapter = ArrayAdapter(
+                    requireContext(),
+                    R.layout.spinner_item,
+                    (it["Subjects"] as ArrayList<*>)
+                )
+                ArrayAdapter<String>(requireContext(), R.layout.spinner_item,)
+            }
+        }
+
         return binding.root
     }
 
@@ -76,7 +88,7 @@ class AddCourseFragment : Fragment() {
         binding.subjectSpinner.adapter = ArrayAdapter<String>(
             requireContext(),
             R.layout.spinner_item,
-            arrayOf("Hello", "Bonjour", "My name is glass joe")
+            arrayOf("")
         )
 
         viewModel.subject = "Javascript"
