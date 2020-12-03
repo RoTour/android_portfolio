@@ -7,6 +7,7 @@ import android.text.Editable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.core.widget.addTextChangedListener
@@ -27,6 +28,9 @@ class AddCourseFragment : Fragment() {
 //    }
 
     private lateinit var binding: AddCourseFragmentBinding
+
+    lateinit var subjectSpinnerAdapter: MySpinnerAdapter
+
     private val viewModel by viewModels<AddCourseViewModel> {
         AddCourseViewModelFactory()
     }
@@ -39,14 +43,19 @@ class AddCourseFragment : Fragment() {
         binding = AddCourseFragmentBinding.inflate(inflater, container, false)
         binding.loadingLayout.visibility = View.GONE
 
-        val subjectSpinnerAdapter = MySpinnerAdapter(requireContext())
-        binding.subjectSpinner.adapter = subjectSpinnerAdapter
+        subjectSpinnerAdapter = MySpinnerAdapter(requireContext())
 
         setInputsListeners()
+
+        setSpinnersObservers()
+        setSpinnersClickListeners()
 
         binding.datePickerButton.setOnClickListener { showDateTimePickers() }
 
         binding.createCourseButton.setOnClickListener { createCourseWithInputs() }
+
+
+
 
         viewModel.uploadResult.observe(viewLifecycleOwner) {
             if (it is Result.Loading) {
@@ -63,23 +72,44 @@ class AddCourseFragment : Fragment() {
             }
         }
 
+
+        return binding.root
+    }
+
+
+    /**
+     * Set UI updating when Firestore data is fetched
+     */
+    private fun setSpinnersObservers() {
+
+        binding.subjectSpinner.adapter = subjectSpinnerAdapter
+
         viewModel.spinnersData.observe(viewLifecycleOwner) {
-            if(it.isNotEmpty()){
+            if (it.isNotEmpty()) {
                 Timber.i("spinner: Updating data")
-                    subjectSpinnerAdapter.submitList((it["Subjects"] as List<String>))
-//                binding.subjectSpinner.adapter = MySpinnerAdapter(requireContext(), (it["Subjects"] as List<String>))
-//                subjectSpinnerAdapter.submitList(it["Subjects"] as List<String>)
-//                binding.subjectSpinner.adapter = ArrayAdapter(
-//                    requireContext(),
-//                    R.layout.spinner_item,
-//                    ( as ArrayList<*>)
-//                )
-//                ArrayAdapter<String>(requireContext(), R.layout.spinner_item,)
-//                binding.subjectSpinner.adapter = SpinnerAdapter
+                subjectSpinnerAdapter.submitList((it["Subjects"] as List<String>))
+            }
+        }
+    }
+
+    private fun setSpinnersClickListeners() {
+        binding.subjectSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener{
+            override fun onItemSelected(
+                parent: AdapterView<*>?,
+                view: View?,
+                position: Int,
+                id: Long
+            ) {
+                viewModel.subject = subjectSpinnerAdapter.getItem(position)
+                Timber.i("spinner: viewmodel.subject set to ${viewModel.subject}")
+
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>?) {
+                Timber.i("spinner: Nothing is selected ")
             }
         }
 
-        return binding.root
     }
 
     private fun reset() {
@@ -95,7 +125,7 @@ class AddCourseFragment : Fragment() {
     private fun setInputsListeners() {
 //
 
-        viewModel.subject = "Javascript"
+//        viewModel.subject = "Javascript"
 
         binding.classroomEditText.addTextChangedListener {
             it?.let { viewModel.classroom = it.toString() } ?: run { viewModel.classroom = "" }
@@ -136,7 +166,8 @@ class AddCourseFragment : Fragment() {
         TimePickerDialog(
             requireContext(),
             { _, hourOfDay, minute ->
-                viewModel.time = Date(Calendar.getInstance()
+                viewModel.time = Date(
+                    Calendar.getInstance()
                         .apply {
                             set(
                                 viewModel.day!!.get(Calendar.YEAR),
@@ -149,7 +180,7 @@ class AddCourseFragment : Fragment() {
                 )
                 binding.timePreviewValueTextView.text =
 //                    android.text.format.DateFormat.format("hh:mm", viewModel.time!!)
-                DateFormat.getTimeInstance(DateFormat.SHORT).format(viewModel.time!!)
+                    DateFormat.getTimeInstance(DateFormat.SHORT).format(viewModel.time!!)
             },
             now.get(Calendar.HOUR),
             now.get(Calendar.MINUTE),

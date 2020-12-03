@@ -13,4 +13,6 @@
     <string name="not_selected">Not Selected</string>
     <string name="time">Time : </string>
     <string name="date">Date : </string>
+    <string name="addSubject">+ Add Subject</string>
+    <string name="nothing_selected_subject">Select a subject...</string>
 </resources>

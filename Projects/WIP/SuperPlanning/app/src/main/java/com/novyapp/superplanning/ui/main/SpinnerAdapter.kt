@@ -6,12 +6,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
-import android.widget.BaseAdapter
-import android.widget.SpinnerAdapter
 import android.widget.TextView
-import androidx.recyclerview.widget.RecyclerView
 import com.novyapp.superplanning.R
-import com.novyapp.superplanning.databinding.CustomSpinnerItemBinding
 
 
 class MySpinnerAdapter(
@@ -19,23 +15,25 @@ class MySpinnerAdapter(
     private var data: MutableList<String> = mutableListOf()
 ) : ArrayAdapter<String>(context, 0, data){
 
-    init {
-        setNotifyOnChange(true)
+
+
+    fun submitList(newData: List<String>){
+        data.clear()
+        data.addAll(0, newData)
+        data.add(0, context.getString(R.string.addSubject))
+        notifyDataSetChanged()
     }
 
-    fun submitList(data: List<String>){
-        this.data.clear()
-        this.data.addAll(0, data)
-        this.notifyDataSetChanged()
+    override fun getItem(position: Int): String {
+        return data[position]
     }
-
-
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
         return createItemView(position, convertView, parent)
     }
 
     override fun getDropDownView(position: Int, convertView: View?, parent: ViewGroup): View {
+
         return createItemView(position, convertView, parent)
     }
 
@@ -48,9 +46,8 @@ class MySpinnerAdapter(
             false
         )
 
-        value?.let {
             view.findViewById<TextView>(R.id.item_textView).text = value
-        }
+
         return view
     }
 }
