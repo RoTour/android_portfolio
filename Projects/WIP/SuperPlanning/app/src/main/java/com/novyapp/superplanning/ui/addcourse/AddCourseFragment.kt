@@ -15,10 +15,10 @@ import androidx.fragment.app.viewModels
 import com.novyapp.superplanning.R
 import com.novyapp.superplanning.data.Result
 import com.novyapp.superplanning.databinding.AddCourseFragmentBinding
+import com.novyapp.superplanning.ui.main.MySpinnerAdapter
 import timber.log.Timber
 import java.text.DateFormat
 import java.util.*
-import kotlin.collections.ArrayList
 
 class AddCourseFragment : Fragment() {
 
@@ -38,6 +38,9 @@ class AddCourseFragment : Fragment() {
     ): View {
         binding = AddCourseFragmentBinding.inflate(inflater, container, false)
         binding.loadingLayout.visibility = View.GONE
+
+        val subjectSpinnerAdapter = MySpinnerAdapter(requireContext())
+        binding.subjectSpinner.adapter = subjectSpinnerAdapter
 
         setInputsListeners()
 
@@ -62,12 +65,17 @@ class AddCourseFragment : Fragment() {
 
         viewModel.spinnersData.observe(viewLifecycleOwner) {
             if(it.isNotEmpty()){
-                binding.subjectSpinner.adapter = ArrayAdapter(
-                    requireContext(),
-                    R.layout.spinner_item,
-                    (it["Subjects"] as ArrayList<*>)
-                )
-                ArrayAdapter<String>(requireContext(), R.layout.spinner_item,)
+                Timber.i("spinner: Updating data")
+                    subjectSpinnerAdapter.submitList((it["Subjects"] as List<String>))
+//                binding.subjectSpinner.adapter = MySpinnerAdapter(requireContext(), (it["Subjects"] as List<String>))
+//                subjectSpinnerAdapter.submitList(it["Subjects"] as List<String>)
+//                binding.subjectSpinner.adapter = ArrayAdapter(
+//                    requireContext(),
+//                    R.layout.spinner_item,
+//                    ( as ArrayList<*>)
+//                )
+//                ArrayAdapter<String>(requireContext(), R.layout.spinner_item,)
+//                binding.subjectSpinner.adapter = SpinnerAdapter
             }
         }
 
@@ -85,11 +93,7 @@ class AddCourseFragment : Fragment() {
 
     // Ugly code
     private fun setInputsListeners() {
-        binding.subjectSpinner.adapter = ArrayAdapter<String>(
-            requireContext(),
-            R.layout.spinner_item,
-            arrayOf("")
-        )
+//
 
         viewModel.subject = "Javascript"
 
