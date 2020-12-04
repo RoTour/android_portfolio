@@ -15,4 +15,5 @@
     <string name="date">Date : </string>
     <string name="addSubject">+ Add Subject</string>
     <string name="nothing_selected_subject">Select a subject...</string>
+    <string name="select_subject_button">Select subject...</string>
 </resources>

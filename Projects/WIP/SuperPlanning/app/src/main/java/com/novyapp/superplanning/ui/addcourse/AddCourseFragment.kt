@@ -2,17 +2,19 @@ package com.novyapp.superplanning.ui.addcourse
 
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
+import android.content.DialogInterface
 import android.os.Bundle
 import android.text.Editable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.AdapterView
-import android.widget.ArrayAdapter
+import android.widget.Button
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.LiveData
 import com.novyapp.superplanning.R
 import com.novyapp.superplanning.data.Result
 import com.novyapp.superplanning.databinding.AddCourseFragmentBinding
@@ -20,6 +22,8 @@ import com.novyapp.superplanning.ui.main.MySpinnerAdapter
 import timber.log.Timber
 import java.text.DateFormat
 import java.util.*
+import kotlin.collections.LinkedHashMap
+
 
 class AddCourseFragment : Fragment() {
 
@@ -28,7 +32,7 @@ class AddCourseFragment : Fragment() {
 //    }
 
     private lateinit var binding: AddCourseFragmentBinding
-
+    private var inputValues = LinkedHashMap<Button, String>()
     lateinit var subjectSpinnerAdapter: MySpinnerAdapter
 
     private val viewModel by viewModels<AddCourseViewModel> {
@@ -43,12 +47,13 @@ class AddCourseFragment : Fragment() {
         binding = AddCourseFragmentBinding.inflate(inflater, container, false)
         binding.loadingLayout.visibility = View.GONE
 
+        inputValues[binding.selectSubjectButton] = viewModel.subject
+
         subjectSpinnerAdapter = MySpinnerAdapter(requireContext())
 
         setInputsListeners()
+        setButtonsListeners()
 
-        setSpinnersObservers()
-        setSpinnersClickListeners()
 
         binding.datePickerButton.setOnClickListener { showDateTimePickers() }
 
@@ -76,41 +81,27 @@ class AddCourseFragment : Fragment() {
         return binding.root
     }
 
+    private fun setButtonsListeners() {
+        inputValues.forEach { (key, value) ->
+            key.setOnClickListener { buttonView ->
+                activity?.let {
+                    val builder = AlertDialog.Builder(it)
+                    val items: List<*> = (viewModel.spinnersData.value?.get("Subjects") as List<*>)
+                    val arrayItems: Array<String> = items.filterIsInstance<String>().toTypedArray()
 
-    /**
-     * Set UI updating when Firestore data is fetched
-     */
-    private fun setSpinnersObservers() {
-
-        binding.subjectSpinner.adapter = subjectSpinnerAdapter
-
-        viewModel.spinnersData.observe(viewLifecycleOwner) {
-            if (it.isNotEmpty()) {
-                Timber.i("spinner: Updating data")
-                subjectSpinnerAdapter.submitList((it["Subjects"] as List<String>))
+                    builder.setTitle(R.string.select_subject_button)
+                        .setItems(
+                            arrayItems,
+                            DialogInterface.OnClickListener { dialog, which ->
+                                // The 'which' argument contains the index position
+                                // of the selected item
+                            })
+                    builder.create().show()
+                } ?: throw IllegalStateException("Activity cannot be null")
             }
         }
     }
 
-    private fun setSpinnersClickListeners() {
-        binding.subjectSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener{
-            override fun onItemSelected(
-                parent: AdapterView<*>?,
-                view: View?,
-                position: Int,
-                id: Long
-            ) {
-                viewModel.subject = subjectSpinnerAdapter.getItem(position)
-                Timber.i("spinner: viewmodel.subject set to ${viewModel.subject}")
-
-            }
-
-            override fun onNothingSelected(parent: AdapterView<*>?) {
-                Timber.i("spinner: Nothing is selected ")
-            }
-        }
-
-    }
 
     private fun reset() {
         viewModel.resetInputs()
