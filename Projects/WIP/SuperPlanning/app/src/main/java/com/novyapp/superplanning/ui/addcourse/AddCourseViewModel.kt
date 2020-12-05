@@ -11,6 +11,14 @@ import timber.log.Timber
 import java.lang.Exception
 import java.util.*
 
+enum class DataTypes(val value: String) {
+    SUBJECT("Subjects"),
+    PROFESSOR("Professors"),
+    PROMOTION("Promotions"),
+    CLASSROOM("Classrooms")
+}
+
+
 class AddCourseViewModel : ViewModel() {
 
     var subject: String = ""
@@ -44,6 +52,10 @@ class AddCourseViewModel : ViewModel() {
 
     fun resetInputs() {
         professor = ""; promotion =""; classroom = ""; day = null; time = null
+    }
+
+    fun setNewSubject(newValue: String){
+        subject = newValue
     }
 }
 

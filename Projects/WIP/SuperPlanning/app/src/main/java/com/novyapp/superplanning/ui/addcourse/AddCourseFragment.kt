@@ -2,7 +2,6 @@ package com.novyapp.superplanning.ui.addcourse
 
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
-import android.content.DialogInterface
 import android.os.Bundle
 import android.text.Editable
 import android.view.LayoutInflater
@@ -14,7 +13,6 @@ import androidx.appcompat.app.AlertDialog
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.LiveData
 import com.novyapp.superplanning.R
 import com.novyapp.superplanning.data.Result
 import com.novyapp.superplanning.databinding.AddCourseFragmentBinding
@@ -33,6 +31,7 @@ class AddCourseFragment : Fragment() {
 
     private lateinit var binding: AddCourseFragmentBinding
     private var inputValues = LinkedHashMap<Button, String>()
+    private lateinit var inputValuesRefs: Array<Pair<Button, String>>
     lateinit var subjectSpinnerAdapter: MySpinnerAdapter
 
     private val viewModel by viewModels<AddCourseViewModel> {
@@ -48,6 +47,9 @@ class AddCourseFragment : Fragment() {
         binding.loadingLayout.visibility = View.GONE
 
         inputValues[binding.selectSubjectButton] = viewModel.subject
+        inputValuesRefs = arrayOf(
+            binding.selectSubjectButton to DataTypes.SUBJECT.value
+        )
 
         subjectSpinnerAdapter = MySpinnerAdapter(requireContext())
 
@@ -82,24 +84,48 @@ class AddCourseFragment : Fragment() {
     }
 
     private fun setButtonsListeners() {
-        inputValues.forEach { (key, value) ->
-            key.setOnClickListener { buttonView ->
-                activity?.let {
-                    val builder = AlertDialog.Builder(it)
-                    val items: List<*> = (viewModel.spinnersData.value?.get("Subjects") as List<*>)
-                    val arrayItems: Array<String> = items.filterIsInstance<String>().toTypedArray()
-
-                    builder.setTitle(R.string.select_subject_button)
-                        .setItems(
-                            arrayItems,
-                            DialogInterface.OnClickListener { dialog, which ->
-                                // The 'which' argument contains the index position
-                                // of the selected item
-                            })
-                    builder.create().show()
-                } ?: throw IllegalStateException("Activity cannot be null")
+        inputValuesRefs.forEach { pair: Pair<Button, String> ->
+            pair.first.setOnClickListener {
+                createSelectDialog(pair.second, pair.first) { newStr ->
+                    viewModel.setNewSubject(newStr)
+                }
             }
         }
+    }
+
+    private fun createSelectDialog(dataType: String, button: Button, onResult: (newValue: String) -> Unit) {
+        activity?.let {
+            val builder = AlertDialog.Builder(it)
+            val items: List<*> = (viewModel.spinnersData.value?.get(dataType) as List<*>)
+            val arrayItems: Array<String> = items.filterIsInstance<String>().toTypedArray()
+            builder.setTitle(R.string.select_subject_button)
+                .setItems(arrayItems) { _, which ->
+                    onResult(arrayItems[which])
+                    button.text = arrayItems[which]
+                    Timber.i("spinner: new subject value is ${viewModel.subject} (should be ${arrayItems[which]})")
+                    // The 'which' argument contains the index position
+                    // of the selected item
+                }
+            builder.create().show()
+        } ?: throw IllegalStateException("Activity cannot be null")
+    }
+
+
+    private fun createSubjectSelectDialog() {
+        activity?.let {
+            val builder = AlertDialog.Builder(it)
+            val items: List<*> = (viewModel.spinnersData.value?.get("Subjects") as List<*>)
+            val arrayItems: Array<String> = items.filterIsInstance<String>().toTypedArray()
+
+            builder.setTitle(R.string.select_subject_button)
+                .setItems(arrayItems) { _, which ->
+                    inputValues[binding.selectSubjectButton] = arrayItems[which]
+                    Timber.i("spinner: new subject value is ${viewModel.subject} (should be ${arrayItems[which]})")
+                    // The 'which' argument contains the index position
+                    // of the selected item
+                }
+            builder.create().show()
+        } ?: throw IllegalStateException("Activity cannot be null")
     }
 
 
