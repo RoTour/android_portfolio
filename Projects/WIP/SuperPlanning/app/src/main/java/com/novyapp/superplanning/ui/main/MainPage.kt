@@ -47,6 +47,7 @@ class MainPage : Fragment() {
             testFireStore()
         }
 
+        FirebaseDataSource.testFunction()
 
 //        val adapter = ViewPagerAdapter()
 //        binding.viewPager.adapter = adapter

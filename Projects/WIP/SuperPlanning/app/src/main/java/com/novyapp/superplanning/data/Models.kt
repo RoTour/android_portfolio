@@ -47,3 +47,5 @@ sealed class Result<out R> {
         }
     }
 }
+
+data class Reference<out T>(val pointedValue: T)

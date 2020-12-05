@@ -1,6 +1,7 @@
 package com.novyapp.superplanning.ui.addcourse
 
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Transformations
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.google.firebase.Timestamp
@@ -10,6 +11,7 @@ import com.novyapp.superplanning.data.Result
 import timber.log.Timber
 import java.lang.Exception
 import java.util.*
+import kotlin.collections.HashMap
 
 enum class DataTypes(val value: String) {
     SUBJECT("Subjects"),
@@ -29,6 +31,13 @@ class AddCourseViewModel : ViewModel() {
     var time: Date? = null
 
     var spinnersData: MutableLiveData<Map<String, Any>> = FirebaseDataSource.getDistinctSubjects()
+
+//    : MutableLiveData<HashMap<String, MutableList<String>>>
+    var displayData = Transformations.map(spinnersData) {
+        val result = HashMap<String, MutableList<String>>()
+        it.forEach { (key, value) -> result[key] = (value as List<*>).filterIsInstance<String>().toMutableList() }
+        result
+    }
 
     var uploadResult: MutableLiveData<Result<String>> = MutableLiveData()
 
@@ -56,6 +65,11 @@ class AddCourseViewModel : ViewModel() {
 
     fun setNewSubject(newValue: String){
         subject = newValue
+    }
+
+    fun newValueOn(dataType: String, newValue: String) {
+        val data = displayData.value
+        data?.get(dataType)?.add(newValue)
     }
 }
 

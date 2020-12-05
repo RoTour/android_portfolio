@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.core.widget.addTextChangedListener
@@ -16,7 +17,6 @@ import androidx.fragment.app.viewModels
 import com.novyapp.superplanning.R
 import com.novyapp.superplanning.data.Result
 import com.novyapp.superplanning.databinding.AddCourseFragmentBinding
-import com.novyapp.superplanning.ui.main.MySpinnerAdapter
 import timber.log.Timber
 import java.text.DateFormat
 import java.util.*
@@ -31,8 +31,6 @@ class AddCourseFragment : Fragment() {
 
     private lateinit var binding: AddCourseFragmentBinding
     private var inputValues = LinkedHashMap<Button, String>()
-    private lateinit var inputValuesRefs: Array<Pair<Button, String>>
-    lateinit var subjectSpinnerAdapter: MySpinnerAdapter
 
     private val viewModel by viewModels<AddCourseViewModel> {
         AddCourseViewModelFactory()
@@ -45,13 +43,6 @@ class AddCourseFragment : Fragment() {
     ): View {
         binding = AddCourseFragmentBinding.inflate(inflater, container, false)
         binding.loadingLayout.visibility = View.GONE
-
-        inputValues[binding.selectSubjectButton] = viewModel.subject
-        inputValuesRefs = arrayOf(
-            binding.selectSubjectButton to DataTypes.SUBJECT.value
-        )
-
-        subjectSpinnerAdapter = MySpinnerAdapter(requireContext())
 
         setInputsListeners()
         setButtonsListeners()
@@ -84,27 +75,54 @@ class AddCourseFragment : Fragment() {
     }
 
     private fun setButtonsListeners() {
-        inputValuesRefs.forEach { pair: Pair<Button, String> ->
-            pair.first.setOnClickListener {
-                createSelectDialog(pair.second, pair.first) { newStr ->
+            binding.selectSubjectButton.setOnClickListener {
+                createSelectDialog(DataTypes.SUBJECT.value) { newStr ->
                     viewModel.setNewSubject(newStr)
+                    binding.selectSubjectButton.text = newStr
                 }
             }
-        }
     }
 
-    private fun createSelectDialog(dataType: String, button: Button, onResult: (newValue: String) -> Unit) {
+    private fun createSelectDialog(dataType: String, onResult: (newValue: String) -> Unit) {
         activity?.let {
             val builder = AlertDialog.Builder(it)
-            val items: List<*> = (viewModel.spinnersData.value?.get(dataType) as List<*>)
-            val arrayItems: Array<String> = items.filterIsInstance<String>().toTypedArray()
+
+            viewModel.displayData.value?.get(dataType)?.add("+ Add $dataType")
+            val arrayItems = viewModel.displayData.value?.get(dataType)?.toTypedArray() ?: arrayOf("+ Add $dataType")
+
             builder.setTitle(R.string.select_subject_button)
                 .setItems(arrayItems) { _, which ->
-                    onResult(arrayItems[which])
-                    button.text = arrayItems[which]
-                    Timber.i("spinner: new subject value is ${viewModel.subject} (should be ${arrayItems[which]})")
-                    // The 'which' argument contains the index position
-                    // of the selected item
+                    if (which != 0) {
+                        onResult(arrayItems[which])
+                        Timber.i("spinner: new subject value is ${viewModel.subject} (should be ${arrayItems[which]})")
+                    } else {
+                        showNewFieldDialog(dataType, onResult)
+                    }
+                }
+            builder.create().show()
+        } ?: throw IllegalStateException("Activity cannot be null")
+    }
+
+    private fun showNewFieldDialog(dataType: String, onResult: (newValue: String) -> Unit) {
+        activity?.let {
+            val builder = AlertDialog.Builder(it)
+            // Get the layout inflater
+            val inflater = requireActivity().layoutInflater;
+
+            // Inflate and set the layout for the dialog
+            // Pass null as the parent view because its going in the dialog layout
+            val dialogView = inflater.inflate(R.layout.add_field_dialog, null)
+            builder.setView(dialogView)
+                // Add action buttons
+                .setPositiveButton(R.string.confirm) { dialog, id ->
+                    val inputValue =
+                        dialogView.findViewById<EditText>(R.id.newValue_editText)?.text.toString()
+                    viewModel.newValueOn(dataType, inputValue)
+                    onResult(inputValue)
+                    Timber.i("spinner: $inputValue")
+                }
+                .setNegativeButton(R.string.cancel) { dialog, id ->
+                    dialog.cancel()
                 }
             builder.create().show()
         } ?: throw IllegalStateException("Activity cannot be null")

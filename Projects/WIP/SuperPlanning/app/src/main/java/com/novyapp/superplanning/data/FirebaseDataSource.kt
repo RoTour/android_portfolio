@@ -107,8 +107,9 @@ object FirebaseDataSource {
     }
 
     fun testFunction() {
-
+        getPreFilledValues()
     }
+
 
     fun getDistinctSubjects(): MutableLiveData<Map<String, Any>> {
         val subjects = MutableLiveData<Map<String, Any>>()
@@ -121,6 +122,26 @@ object FirebaseDataSource {
             .addOnFailureListener { subjects.value = mapOf() }
 
         return subjects
+    }
+
+    fun getPreFilledValues(): MutableLiveData<HashMap<String, MutableList<String>>>{
+        val result = MutableLiveData(HashMap<String, MutableList<String>>())
+
+        db.collection("Types").document("data")
+            .get()
+            .addOnSuccessListener { response ->
+                val resultBuilder = HashMap<String, MutableList<String>>()
+                Timber.i("${response.data}")
+                response.data?.forEach { (key, value) ->
+                    resultBuilder[key] = (value as List<*>).filterIsInstance<String>().toMutableList()
+                }
+                result.value = resultBuilder
+            }
+            .addOnFailureListener {
+
+            }
+
+        return result
     }
 
     private fun requestCollection(
