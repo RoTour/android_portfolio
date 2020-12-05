@@ -134,6 +134,7 @@ object FirebaseDataSource {
                 Timber.i("${response.data}")
                 response.data?.forEach { (key, value) ->
                     resultBuilder[key] = (value as List<*>).filterIsInstance<String>().toMutableList()
+                    resultBuilder[key]?.add(0, "+ Add $key")
                 }
                 result.value = resultBuilder
             }

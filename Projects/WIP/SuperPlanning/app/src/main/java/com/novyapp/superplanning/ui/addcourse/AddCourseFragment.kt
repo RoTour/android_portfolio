@@ -87,8 +87,7 @@ class AddCourseFragment : Fragment() {
         activity?.let {
             val builder = AlertDialog.Builder(it)
 
-            viewModel.displayData.value?.get(dataType)?.add("+ Add $dataType")
-            val arrayItems = viewModel.displayData.value?.get(dataType)?.toTypedArray() ?: arrayOf("+ Add $dataType")
+            val arrayItems = viewModel.spinnersData.value?.get(dataType)?.toTypedArray() ?: arrayOf("+ Add $dataType")
 
             builder.setTitle(R.string.select_subject_button)
                 .setItems(arrayItems) { _, which ->
@@ -107,21 +106,21 @@ class AddCourseFragment : Fragment() {
         activity?.let {
             val builder = AlertDialog.Builder(it)
             // Get the layout inflater
-            val inflater = requireActivity().layoutInflater;
+            val inflater = requireActivity().layoutInflater
 
             // Inflate and set the layout for the dialog
             // Pass null as the parent view because its going in the dialog layout
             val dialogView = inflater.inflate(R.layout.add_field_dialog, null)
             builder.setView(dialogView)
                 // Add action buttons
-                .setPositiveButton(R.string.confirm) { dialog, id ->
+                .setPositiveButton(R.string.confirm) { _, _ ->
                     val inputValue =
                         dialogView.findViewById<EditText>(R.id.newValue_editText)?.text.toString()
                     viewModel.newValueOn(dataType, inputValue)
                     onResult(inputValue)
                     Timber.i("spinner: $inputValue")
                 }
-                .setNegativeButton(R.string.cancel) { dialog, id ->
+                .setNegativeButton(R.string.cancel) { dialog, _ ->
                     dialog.cancel()
                 }
             builder.create().show()

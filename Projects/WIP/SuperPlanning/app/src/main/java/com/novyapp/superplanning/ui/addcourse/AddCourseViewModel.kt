@@ -30,21 +30,24 @@ class AddCourseViewModel : ViewModel() {
     var day: Calendar? = null
     var time: Date? = null
 
-    var spinnersData: MutableLiveData<Map<String, Any>> = FirebaseDataSource.getDistinctSubjects()
+    var spinnersData: MutableLiveData<HashMap<String, MutableList<String>>> =
+        FirebaseDataSource.getPreFilledValues()
 
-//    : MutableLiveData<HashMap<String, MutableList<String>>>
+    //    : MutableLiveData<HashMap<String, MutableList<String>>>
     var displayData = Transformations.map(spinnersData) {
         val result = HashMap<String, MutableList<String>>()
-        it.forEach { (key, value) -> result[key] = (value as List<*>).filterIsInstance<String>().toMutableList() }
+        it.forEach { (key, value) ->
+            result[key] = (value as List<*>).filterIsInstance<String>().toMutableList()
+        }
         result
     }
 
     var uploadResult: MutableLiveData<Result<String>> = MutableLiveData()
 
     fun saveNewCourse() {
-        if(checkInputsEmpty()) return
+        if (checkInputsEmpty()) return
 
-        val timestamp = Timestamp(time!!.time/1000,0)
+        val timestamp = Timestamp(time!!.time / 1000, 0)
         val newCourse = CourseV2(timestamp, professor, subject, classroom)
         Timber.i("upload: timestamp = ${timestamp.toDate()}")
         FirebaseDataSource.addCourseToPromo(newCourse, promotion, uploadResult)
@@ -60,16 +63,15 @@ class AddCourseViewModel : ViewModel() {
     }
 
     fun resetInputs() {
-        professor = ""; promotion =""; classroom = ""; day = null; time = null
+        professor = ""; promotion = ""; classroom = ""; day = null; time = null
     }
 
-    fun setNewSubject(newValue: String){
+    fun setNewSubject(newValue: String) {
         subject = newValue
     }
 
     fun newValueOn(dataType: String, newValue: String) {
-        val data = displayData.value
-        data?.get(dataType)?.add(newValue)
+        spinnersData.value?.get(dataType)?.add(newValue)
     }
 }
 
