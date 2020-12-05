@@ -14,8 +14,11 @@
     <string name="time">Time : </string>
     <string name="date">Date : </string>
     <string name="addSubject">+ Add Subject</string>
-    <string name="nothing_selected_subject">Select a subject...</string>
-    <string name="select_subject_button">Select subject...</string>
+    <string name="nothing_selected_subject">Select a subject…</string>
+    <string name="select_subject_button">Select subject…</string>
     <string name="confirm">Confirm</string>
     <string name="cancel">Cancel</string>
+    <string name="select_professor_button">Select professor…</string>
+    <string name="select_promotion_button">Select promotion…</string>
+    <string name="select_classroom_button">Select classroom…</string>
 </resources>

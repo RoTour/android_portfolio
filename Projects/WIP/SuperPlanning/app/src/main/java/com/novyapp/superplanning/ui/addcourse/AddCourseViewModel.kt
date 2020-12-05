@@ -23,12 +23,12 @@ enum class DataTypes(val value: String) {
 
 class AddCourseViewModel : ViewModel() {
 
-    var subject: String = ""
-    var professor: String = ""
-    var promotion: String = ""
-    var classroom: String = ""
-    var day: Calendar? = null
-    var time: Date? = null
+    private var subject: String = ""
+    private var professor: String = ""
+    private var promotion: String = ""
+    private var classroom: String = ""
+    private var day: Calendar? = null
+    private var time: Date? = null
 
     var spinnersData: MutableLiveData<HashMap<String, MutableList<String>>> =
         FirebaseDataSource.getPreFilledValues()
@@ -73,6 +73,18 @@ class AddCourseViewModel : ViewModel() {
     fun newValueOn(dataType: String, newValue: String) {
         spinnersData.value?.get(dataType)?.add(newValue)
     }
+
+
+    fun subject(newSubject: String) { subject = newSubject }
+    fun professor(newProfessor: String) { professor = newProfessor }
+    fun promotion(newPromotion: String) { promotion = newPromotion }
+    fun classroom(newClassroom: String) { classroom = newClassroom }
+
+    fun day(newDay: Calendar) { day = newDay }
+    fun day(): Calendar{ return day ?: Calendar.getInstance() }
+
+    fun time(newTime: Date) { time = newTime }
+    fun time(): Date{ return time ?: Date() }
 }
 
 class AddCourseViewModelFactory : ViewModelProvider.Factory {

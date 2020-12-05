@@ -3,15 +3,12 @@ package com.novyapp.superplanning.ui.addcourse
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
 import android.os.Bundle
-import android.text.Editable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
-import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.novyapp.superplanning.R
@@ -20,7 +17,6 @@ import com.novyapp.superplanning.databinding.AddCourseFragmentBinding
 import timber.log.Timber
 import java.text.DateFormat
 import java.util.*
-import kotlin.collections.LinkedHashMap
 
 
 class AddCourseFragment : Fragment() {
@@ -30,7 +26,6 @@ class AddCourseFragment : Fragment() {
 //    }
 
     private lateinit var binding: AddCourseFragmentBinding
-    private var inputValues = LinkedHashMap<Button, String>()
 
     private val viewModel by viewModels<AddCourseViewModel> {
         AddCourseViewModelFactory()
@@ -44,7 +39,6 @@ class AddCourseFragment : Fragment() {
         binding = AddCourseFragmentBinding.inflate(inflater, container, false)
         binding.loadingLayout.visibility = View.GONE
 
-        setInputsListeners()
         setButtonsListeners()
 
 
@@ -75,28 +69,43 @@ class AddCourseFragment : Fragment() {
     }
 
     private fun setButtonsListeners() {
-            binding.selectSubjectButton.setOnClickListener {
-                createSelectDialog(DataTypes.SUBJECT.value) { newStr ->
-                    viewModel.setNewSubject(newStr)
-                    binding.selectSubjectButton.text = newStr
-                }
+        binding.selectSubjectButton.setOnClickListener {
+            createSelectDialog(DataTypes.SUBJECT.value) { newStr ->
+                viewModel.subject(newStr)
+                binding.selectSubjectButton.text = newStr
             }
+        }
+        binding.selectProfessorButton.setOnClickListener {
+            createSelectDialog(DataTypes.PROFESSOR.value) { newStr ->
+                viewModel.professor(newStr)
+                binding.selectProfessorButton.text = newStr
+            }
+        }
+        binding.selectPromotionButton.setOnClickListener {
+            createSelectDialog(DataTypes.PROMOTION.value) { newStr ->
+                viewModel.promotion(newStr)
+                binding.selectPromotionButton.text = newStr
+            }
+        }
+        binding.selectClassroomButton.setOnClickListener {
+            createSelectDialog(DataTypes.CLASSROOM.value) { newStr ->
+                viewModel.classroom(newStr)
+                binding.selectClassroomButton.text = newStr
+            }
+        }
     }
 
     private fun createSelectDialog(dataType: String, onResult: (newValue: String) -> Unit) {
         activity?.let {
             val builder = AlertDialog.Builder(it)
-
-            val arrayItems = viewModel.spinnersData.value?.get(dataType)?.toTypedArray() ?: arrayOf("+ Add $dataType")
+            val arrayItems = viewModel.spinnersData.value?.get(dataType)?.toTypedArray() ?: arrayOf(
+                "+ Add $dataType"
+            )
 
             builder.setTitle(R.string.select_subject_button)
                 .setItems(arrayItems) { _, which ->
-                    if (which != 0) {
-                        onResult(arrayItems[which])
-                        Timber.i("spinner: new subject value is ${viewModel.subject} (should be ${arrayItems[which]})")
-                    } else {
-                        showNewFieldDialog(dataType, onResult)
-                    }
+                    if (which != 0) onResult(arrayItems[which])
+                    else showNewFieldDialog(dataType, onResult)
                 }
             builder.create().show()
         } ?: throw IllegalStateException("Activity cannot be null")
@@ -110,7 +119,7 @@ class AddCourseFragment : Fragment() {
 
             // Inflate and set the layout for the dialog
             // Pass null as the parent view because its going in the dialog layout
-            val dialogView = inflater.inflate(R.layout.add_field_dialog, null)
+            val dialogView = inflater.inflate(R.layout.add_value_dialog, null)
             builder.setView(dialogView)
                 // Add action buttons
                 .setPositiveButton(R.string.confirm) { _, _ ->
@@ -128,49 +137,14 @@ class AddCourseFragment : Fragment() {
     }
 
 
-    private fun createSubjectSelectDialog() {
-        activity?.let {
-            val builder = AlertDialog.Builder(it)
-            val items: List<*> = (viewModel.spinnersData.value?.get("Subjects") as List<*>)
-            val arrayItems: Array<String> = items.filterIsInstance<String>().toTypedArray()
-
-            builder.setTitle(R.string.select_subject_button)
-                .setItems(arrayItems) { _, which ->
-                    inputValues[binding.selectSubjectButton] = arrayItems[which]
-                    Timber.i("spinner: new subject value is ${viewModel.subject} (should be ${arrayItems[which]})")
-                    // The 'which' argument contains the index position
-                    // of the selected item
-                }
-            builder.create().show()
-        } ?: throw IllegalStateException("Activity cannot be null")
-    }
-
-
     private fun reset() {
         viewModel.resetInputs()
-//        binding.subjectEditText.text = Editable.Factory().newEditable("")
-        binding.classroomEditText.text = Editable.Factory().newEditable("")
-        binding.promotionEditText.text = Editable.Factory().newEditable("")
-        binding.professorEditText.text = Editable.Factory().newEditable("")
+        binding.selectSubjectButton.text = getString(R.string.select_subject_button)
+        binding.selectProfessorButton.text = getString(R.string.select_professor_button)
+        binding.selectPromotionButton.text = getString(R.string.select_promotion_button)
+        binding.selectClassroomButton.text = getString(R.string.select_classroom_button)
     }
 
-
-    // Ugly code
-    private fun setInputsListeners() {
-//
-
-//        viewModel.subject = "Javascript"
-
-        binding.classroomEditText.addTextChangedListener {
-            it?.let { viewModel.classroom = it.toString() } ?: run { viewModel.classroom = "" }
-        }
-        binding.promotionEditText.addTextChangedListener {
-            it?.let { viewModel.promotion = it.toString() } ?: run { viewModel.promotion = "" }
-        }
-        binding.professorEditText.addTextChangedListener {
-            it?.let { viewModel.professor = it.toString() } ?: run { viewModel.professor = "" }
-        }
-    }
 
     private fun showDateTimePickers() {
         val c = Calendar.getInstance()
@@ -181,14 +155,12 @@ class AddCourseFragment : Fragment() {
         val dpd = DatePickerDialog(
             requireContext(), { _, year1, monthOfYear, dayOfMonth ->
                 // Creates a date with values provided from the Picker
-                viewModel.day =
-                    Calendar.getInstance()
-                        .apply { set(year1, monthOfYear, dayOfMonth) }
+                viewModel.day(Calendar.getInstance().apply { set(year1, monthOfYear, dayOfMonth) })
 
                 showTimePicker()
                 binding.datePreviewValueTextView.text =
                     DateFormat.getDateInstance(DateFormat.LONG)
-                        .format(Date(viewModel.day!!.timeInMillis))
+                        .format(Date(viewModel.day().timeInMillis))
             }, year, month, day
         )
 
@@ -200,21 +172,19 @@ class AddCourseFragment : Fragment() {
         TimePickerDialog(
             requireContext(),
             { _, hourOfDay, minute ->
-                viewModel.time = Date(
-                    Calendar.getInstance()
-                        .apply {
-                            set(
-                                viewModel.day!!.get(Calendar.YEAR),
-                                viewModel.day!!.get(Calendar.MONTH),
-                                viewModel.day!!.get(Calendar.DAY_OF_MONTH),
-                                hourOfDay,
-                                minute
-                            )
-                        }.timeInMillis
-                )
+                viewModel.time(Date(Calendar.getInstance()
+                            .apply {
+                                set(
+                                    viewModel.day().get(Calendar.YEAR),
+                                    viewModel.day().get(Calendar.MONTH),
+                                    viewModel.day().get(Calendar.DAY_OF_MONTH),
+                                    hourOfDay,
+                                    minute
+                                )
+                            }.timeInMillis))
                 binding.timePreviewValueTextView.text =
 //                    android.text.format.DateFormat.format("hh:mm", viewModel.time!!)
-                    DateFormat.getTimeInstance(DateFormat.SHORT).format(viewModel.time!!)
+                    DateFormat.getTimeInstance(DateFormat.SHORT).format(viewModel.time())
             },
             now.get(Calendar.HOUR),
             now.get(Calendar.MINUTE),
