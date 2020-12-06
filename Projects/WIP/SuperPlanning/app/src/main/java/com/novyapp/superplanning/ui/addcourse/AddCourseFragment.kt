@@ -143,6 +143,8 @@ class AddCourseFragment : Fragment() {
         binding.selectProfessorButton.text = getString(R.string.select_professor_button)
         binding.selectPromotionButton.text = getString(R.string.select_promotion_button)
         binding.selectClassroomButton.text = getString(R.string.select_classroom_button)
+        binding.datePreviewValueTextView.text = getString(R.string.not_selected)
+        binding.timePreviewValueTextView.text = getString(R.string.not_selected)
     }
 
 
@@ -193,7 +195,6 @@ class AddCourseFragment : Fragment() {
     }
 
     private fun createCourseWithInputs() {
-        viewModel.checkInputsEmpty()
         Timber.i("upload: create button clicked")
         viewModel.saveNewCourse()
     }
