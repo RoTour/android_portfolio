@@ -1,25 +1,18 @@
 package com.novyapp.superplanning.ui.main
 
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import com.google.firebase.database.MutableData
+import com.novyapp.superplanning.data.CourseV2
 import com.novyapp.superplanning.data.FirebaseDataSource
 import timber.log.Timber
 import java.lang.IllegalArgumentException
 
 class MainPageViewModel : ViewModel() {
-    //    val courses = {
-//        val thisWeek = Calendar.getInstance().get(Calendar.WEEK_OF_YEAR)
-//        val counter = 0
-//        while (counter < 10){
-//            FirebaseDataSource.getCoursesFromPromo("INFO-B2", thisWeek)
-//        }
-//    }
-//    val courses = FirebaseDataSource.getCoursesFromPromoByWeek("INFO-B2")
-    val courses = FirebaseDataSource.getAllCoursesByPromo("INFO-B2")
 
-    init {
-        Timber.i("Init viewModel")
-    }
+    val courses: MutableLiveData<HashMap<String, MutableList<CourseV2>>> =
+        FirebaseDataSource.getCoursesByPromo("TLS-INFO-B2-2020-2021")
 
 }
 

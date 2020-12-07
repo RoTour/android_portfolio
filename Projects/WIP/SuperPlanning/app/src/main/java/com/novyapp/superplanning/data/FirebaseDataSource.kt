@@ -11,6 +11,7 @@ import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.SetOptions
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import com.novyapp.superplanning.todayWeekNumber
 import timber.log.Timber
 import java.util.*
 import kotlin.collections.HashMap
@@ -55,6 +56,37 @@ object FirebaseDataSource {
     }
 
     /**
+     * @param weekNumber to select from which week you want to get the data
+     * @return : HashMap of WeekNumber => mutableListOfCoursesThisWeek
+     */
+
+    fun getCoursesByPromo(
+        promo: String,
+        weekNumber: String = todayWeekNumber().toString()
+    ): MutableLiveData<HashMap<String, MutableList<CourseV2>>> {
+
+        val result = MutableLiveData<HashMap<String, MutableList<CourseV2>>>()
+        val resultBuilder = HashMap<String, MutableList<CourseV2>>()
+
+        db.collection("/Courses/$promo/$weekNumber")
+            .get()
+            .addOnSuccessListener { response ->
+                resultBuilder[weekNumber] = mutableListOf()
+                response.documents.forEach { document ->
+                    resultBuilder[weekNumber]!!.add(document.toCourseV2())
+                    Timber.i("mainPage: ${document.data}")
+                }
+                Timber.i("mainPage: $resultBuilder")
+                result.value = resultBuilder
+            }
+            .addOnFailureListener { e ->
+                Timber.i("mainPage: $e")
+            }
+
+        return result
+    }
+
+    /**
      * @param course should be checked before this function
      */
     fun addCourseToPromo(
@@ -65,17 +97,6 @@ object FirebaseDataSource {
         val weekNumber = Calendar.getInstance()
             .also { it.timeInMillis = course.date!!.seconds * 1000 }
             .get(Calendar.WEEK_OF_YEAR)
-
-//        requestDocument("Courses", promo, {
-//            requestDocument("Types", "data", {
-//                requestCollection("/Courses/$promo/$weekNumber", {
-//                    resultLiveData.value = Result.Success("Course added successfully")
-//                    Timber.i("upload: SUCCESS")
-//                }, { e -> returnException(resultLiveData, e) })
-//            }, { e -> returnException(resultLiveData, e) })
-//        }, { e -> returnException(resultLiveData, e) }, mapOf("updated_at" to Timestamp(Date())))
-
-//        , mapOf("data2" to listOf("Hola", "Quetal"))
 
         db.collection("Courses").document(promo)
             .set(
@@ -97,7 +118,7 @@ object FirebaseDataSource {
                                 resultLiveData.value = Result.Success("Course added successfully")
                                 Timber.i("upload: SUCCESS")
                             }
-                            .addOnFailureListener { e -> returnException(resultLiveData, e)}
+                            .addOnFailureListener { e -> returnException(resultLiveData, e) }
                     }
                     .addOnFailureListener { e -> returnException(resultLiveData, e) }
             }
@@ -110,7 +131,7 @@ object FirebaseDataSource {
 
     }
 
-    fun getPreFilledValues(): MutableLiveData<HashMap<String, MutableList<String>>>{
+    fun getPreFilledValues(): MutableLiveData<HashMap<String, MutableList<String>>> {
         val result = MutableLiveData(HashMap<String, MutableList<String>>())
 
         db.collection("Types").document("data")
@@ -119,7 +140,8 @@ object FirebaseDataSource {
                 val resultBuilder = HashMap<String, MutableList<String>>()
                 Timber.i("${response.data}")
                 response.data?.forEach { (key, value) ->
-                    resultBuilder[key] = (value as List<*>).filterIsInstance<String>().toMutableList()
+                    resultBuilder[key] =
+                        (value as List<*>).filterIsInstance<String>().toMutableList()
                     resultBuilder[key]?.add(0, "+ Add $key")
                 }
                 result.value = resultBuilder
@@ -131,30 +153,6 @@ object FirebaseDataSource {
         return result
     }
 
-    private fun requestCollection(
-        collPath: String,
-        onSuccess: () -> Unit,
-        onFailure: (e: Exception) -> Unit
-    ) {
-
-    }
-
-    private fun requestDocument(
-        collPath: String,
-        doc: String,
-        onSuccess: (Any) -> Unit,
-        onFailure: (e: Exception) -> Unit,
-        data: Map<Any, Any>? = null,
-    ) {
-        val request = db.collection(collPath).document(doc)
-        val result =
-            if (data == null) request.get()
-            else request.set(data, SetOptions.merge())
-
-        result
-            .addOnSuccessListener(onSuccess)
-            .addOnFailureListener(onFailure)
-    }
 
     private fun returnException(resultLiveData: MutableLiveData<Result<String>>, e: Exception) {
         resultLiveData.value = Result.Error(e)

@@ -41,3 +41,6 @@ fun findNextIntBiggerThan(number: String, keys: MutableSet<String>): String {
 //    return "${this.substring(0,3)}/${this.substring(5,6)}/${this.substring(7,8)}"
 //}
 
+fun todayWeekNumber(): Int {
+    return Calendar.getInstance().get(Calendar.WEEK_OF_YEAR)
+}

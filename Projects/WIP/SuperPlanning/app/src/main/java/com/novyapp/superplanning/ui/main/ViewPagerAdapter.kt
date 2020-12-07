@@ -3,12 +3,15 @@ package com.novyapp.superplanning.ui.main
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.novyapp.superplanning.data.Course
+import com.novyapp.superplanning.data.CourseV2
 import com.novyapp.superplanning.databinding.PagerItemBinding
 
 class ViewPagerAdapter : RecyclerView.Adapter<ViewPagerAdapter.WeekRecyclerViewViewHolder>() {
 
-    private var adapterList = linkedMapOf<String, MutableList<Course>>()
+    /**
+     * Map: WeekNumber to AssociatedCourseList
+     */
+    private var adapterList = hashMapOf<String, MutableList<CourseV2>>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): WeekRecyclerViewViewHolder {
         return WeekRecyclerViewViewHolder.from(parent)
@@ -22,7 +25,7 @@ class ViewPagerAdapter : RecyclerView.Adapter<ViewPagerAdapter.WeekRecyclerViewV
         return adapterList.size
     }
 
-    fun submitList(data: LinkedHashMap<String, MutableList<Course>>) {
+    fun submitList(data: HashMap<String, MutableList<CourseV2>>) {
         adapterList.clear()
         adapterList = data
         notifyDataSetChanged()
@@ -32,10 +35,10 @@ class ViewPagerAdapter : RecyclerView.Adapter<ViewPagerAdapter.WeekRecyclerViewV
             private val binding: PagerItemBinding
     ) : RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(mutableList: MutableList<Course>) {
-            val adapter = CourseListAdapter()
-            adapter.submitList(mutableList)
-            binding.recyclerView.adapter = adapter
+        fun bind(coursesForOneWeek: MutableList<CourseV2>) {
+            val oneWeekListAdapter = CourseListAdapter()
+            oneWeekListAdapter.submitList(coursesForOneWeek)
+            binding.recyclerView.adapter = oneWeekListAdapter
             binding.executePendingBindings()
         }
 

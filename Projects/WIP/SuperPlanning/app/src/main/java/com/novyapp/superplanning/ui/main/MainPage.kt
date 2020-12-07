@@ -36,7 +36,7 @@ class MainPage : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = MainPageFragmentBinding.inflate(inflater, container, false)
         db = Firebase.firestore
         if (FirebaseAuth.getInstance().currentUser == null) {
@@ -44,13 +44,17 @@ class MainPage : Fragment() {
             launchSignInFlow()
         } else {
             Timber.i("User is already connected")
-            testFireStore()
         }
 
         FirebaseDataSource.testFunction()
 
-//        val adapter = ViewPagerAdapter()
-//        binding.viewPager.adapter = adapter
+        val adapter = ViewPagerAdapter()
+        binding.viewPager.adapter = adapter
+
+        viewModel.courses.observe(viewLifecycleOwner){
+            Timber.i("mainPage: observed value: $it")
+            adapter.submitList(it)
+        }
 //
 //
 //
@@ -66,40 +70,7 @@ class MainPage : Fragment() {
         return binding.root
     }
 
-    private fun testFireStore() {
-//        val user = hashMapOf(
-//            "first" to "Ada",
-//            "last" to "Lovelace",
-//            "born" to 1815
-//        )
-//
-//        // Add a new document with a generated ID
-//        db.collection("users")
-//            .add(user)
-//            .addOnSuccessListener { documentReference ->
-//                Timber.i("DocumentSnapshot added with ID: ${documentReference.id}")
-//            }
-//            .addOnFailureListener { e ->
-//                Timber.i(e)
-//            }
 
-        val docRef = db
-//            .collection("/Courses/B1-INFO-2020-2021/Weeks")
-//            .document("40")
-//            .collection("Weeks")
-            .collection("/Courses/B1-INFO-2020-2021/Weeks/40/planning")
-        docRef.get()
-            .addOnSuccessListener { result ->
-                val usableList = mutableListOf<CourseV2>()
-                result.documents.forEach {
-                    usableList.add(it.toCourseV2())
-                }
-                Timber.i("Usable list of data: \n $usableList")
-            }
-            .addOnFailureListener { e ->
-                Timber.i(e)
-            }
-    }
 
     private fun launchSignInFlow() {
         val providers = arrayListOf(
@@ -122,7 +93,6 @@ class MainPage : Fragment() {
             if (resultCode == Activity.RESULT_OK) {
                 // User successfully signed in
                 Timber.i("Successfully signed in user ${FirebaseAuth.getInstance().currentUser?.displayName}!")
-                testFireStore()
             } else {
                 // Sign in failed. If response is null the user canceled the
                 // sign-in flow using the back button. Otherwise check
