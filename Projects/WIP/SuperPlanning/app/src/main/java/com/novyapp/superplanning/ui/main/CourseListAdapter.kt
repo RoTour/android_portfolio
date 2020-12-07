@@ -51,6 +51,7 @@ class CourseListAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
          * Courses ordered by DAY : "Day" to List<CourseV2>
          */
         val orderedCourses: LinkedHashMap<String, MutableList<CourseV2>> = LinkedHashMap()
+        newList.sortBy { it.date }
 
         newList.forEach {
             val key = DateFormat.getDateInstance(DateFormat.LONG).format(it.date?.toDate() ?: Date())
