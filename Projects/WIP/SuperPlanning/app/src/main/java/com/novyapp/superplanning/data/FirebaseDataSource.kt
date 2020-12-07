@@ -3,10 +3,6 @@ package com.novyapp.superplanning.data
 import androidx.lifecycle.MutableLiveData
 import com.google.common.base.Ascii.toUpperCase
 import com.google.firebase.Timestamp
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.ValueEventListener
-import com.google.firebase.database.ktx.database
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.SetOptions
 import com.google.firebase.firestore.ktx.firestore
@@ -18,42 +14,8 @@ import kotlin.collections.HashMap
 
 object FirebaseDataSource {
 
-    private var database = Firebase.database.reference
     private var db = Firebase.firestore
 
-    /**
-     *  Returns a LinkedHashMap where
-     *  LinkedHashMap at(WeekNumber) = mutable list of Courses this week
-     *
-     *  ==> LinkedHashMap<{WeekNumber},{listOfCourses}>
-     */
-
-    fun getAllCoursesByPromo(promo: String): MutableLiveData<LinkedHashMap<String, MutableList<Course>>> {
-        val result = MutableLiveData(linkedMapOf<String, MutableList<Course>>())
-
-        database.child("courses")
-            .child(promo)
-            .addValueEventListener(object : ValueEventListener {
-                override fun onDataChange(snapshot: DataSnapshot) {
-                    val toReturn = linkedMapOf<String, MutableList<Course>>()
-                    snapshot.children.forEach { week ->
-                        toReturn[week.key as String] = mutableListOf()
-                        week.children.forEach { course ->
-                            toReturn[week.key as String]!!.add(
-                                course.getValue(Course::class.java) ?: Course()
-                            )
-                        }
-                    }
-                    Timber.i("Fetched data: $toReturn")
-                    result.value = toReturn
-                }
-
-                override fun onCancelled(error: DatabaseError) {
-                    Timber.i(error.message)
-                }
-            })
-        return result
-    }
 
     /**
      * @param weekNumber to select from which week you want to get the data
@@ -76,7 +38,6 @@ object FirebaseDataSource {
                     resultBuilder[weekNumber]!!.add(document.toCourseV2())
                     Timber.i("mainPage: ${document.data}")
                 }
-                Timber.i("mainPage: $resultBuilder")
                 result.value = resultBuilder
             }
             .addOnFailureListener { e ->
@@ -116,7 +77,6 @@ object FirebaseDataSource {
                             .add(course)
                             .addOnSuccessListener {
                                 resultLiveData.value = Result.Success("Course added successfully")
-                                Timber.i("upload: SUCCESS")
                             }
                             .addOnFailureListener { e -> returnException(resultLiveData, e) }
                     }
@@ -124,10 +84,6 @@ object FirebaseDataSource {
             }
             .addOnFailureListener { e -> returnException(resultLiveData, e) }
 
-
-    }
-
-    fun testFunction() {
 
     }
 
@@ -156,7 +112,6 @@ object FirebaseDataSource {
 
     private fun returnException(resultLiveData: MutableLiveData<Result<String>>, e: Exception) {
         resultLiveData.value = Result.Error(e)
-        Timber.i("upload: FAILURE: $e")
     }
 
 }

@@ -43,11 +43,7 @@ class AddCourseFragment : Fragment() {
 
 
         binding.datePickerButton.setOnClickListener { showDateTimePickers() }
-
         binding.createCourseButton.setOnClickListener { createCourseWithInputs() }
-
-
-
 
         viewModel.uploadResult.observe(viewLifecycleOwner) {
             if (it is Result.Loading) {
@@ -98,11 +94,10 @@ class AddCourseFragment : Fragment() {
     private fun createSelectDialog(dataType: String, onResult: (newValue: String) -> Unit) {
         activity?.let {
             val builder = AlertDialog.Builder(it)
-            val arrayItems = viewModel.spinnersData.value?.get(dataType)?.toTypedArray() ?: arrayOf(
-                "+ Add $dataType"
-            )
+            val arrayItems = viewModel.spinnersData.value?.get(dataType)?.toTypedArray()
+                ?: arrayOf("+ Add $dataType")
 
-            builder.setTitle(R.string.select_subject_button)
+            builder.setTitle("${R.string.empty_select} $dataType")
                 .setItems(arrayItems) { _, which ->
                     if (which != 0) onResult(arrayItems[which])
                     else showNewFieldDialog(dataType, onResult)
@@ -114,14 +109,10 @@ class AddCourseFragment : Fragment() {
     private fun showNewFieldDialog(dataType: String, onResult: (newValue: String) -> Unit) {
         activity?.let {
             val builder = AlertDialog.Builder(it)
-            // Get the layout inflater
             val inflater = requireActivity().layoutInflater
-
-            // Inflate and set the layout for the dialog
-            // Pass null as the parent view because its going in the dialog layout
             val dialogView = inflater.inflate(R.layout.add_value_dialog, null)
+
             builder.setView(dialogView)
-                // Add action buttons
                 .setPositiveButton(R.string.confirm) { _, _ ->
                     val inputValue =
                         dialogView.findViewById<EditText>(R.id.newValue_editText)?.text.toString()
@@ -194,9 +185,6 @@ class AddCourseFragment : Fragment() {
         ).show()
     }
 
-    private fun createCourseWithInputs() {
-        Timber.i("upload: create button clicked")
-        viewModel.saveNewCourse()
-    }
+    private fun createCourseWithInputs() { viewModel.saveNewCourse() }
 
 }

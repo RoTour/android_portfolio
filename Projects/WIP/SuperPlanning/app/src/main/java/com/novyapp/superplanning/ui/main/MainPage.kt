@@ -13,11 +13,7 @@ import com.firebase.ui.auth.IdpResponse
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.ktx.Firebase
-import com.novyapp.superplanning.data.CourseV2
-import com.novyapp.superplanning.data.FirebaseDataSource
-import com.novyapp.superplanning.data.toCourseV2
 import com.novyapp.superplanning.databinding.MainPageFragmentBinding
 import timber.log.Timber
 
@@ -46,26 +42,12 @@ class MainPage : Fragment() {
             Timber.i("User is already connected")
         }
 
-        FirebaseDataSource.testFunction()
-
         val adapter = ViewPagerAdapter()
         binding.viewPager.adapter = adapter
 
         viewModel.courses.observe(viewLifecycleOwner){
-            Timber.i("mainPage: observed value: $it")
             adapter.submitList(it)
         }
-//
-//
-//
-//        viewModel.courses.observe(viewLifecycleOwner) {
-//            if (it.isNullOrEmpty()) Timber.i("Course list is Null or Empty")
-//            else {
-//                it.forEach { item -> Timber.i(item.toString()) }
-//                adapter.submitList(it)
-//                Timber.i("List submitted to adapter")
-//            }
-//        }
 
         return binding.root
     }

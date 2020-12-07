@@ -7,7 +7,6 @@ import com.google.firebase.Timestamp
 import com.novyapp.superplanning.data.CourseV2
 import com.novyapp.superplanning.data.FirebaseDataSource
 import com.novyapp.superplanning.data.Result
-import timber.log.Timber
 import java.util.*
 
 enum class DataTypes(val value: String) {
@@ -34,17 +33,14 @@ class AddCourseViewModel : ViewModel() {
 
     fun saveNewCourse() {
         if (checkInputsEmpty()) return
-
         val timestamp = Timestamp(time!!.time / 1000, 0)
         val newCourse = CourseV2(subject, professor, classroom, timestamp)
-        Timber.i("upload: timestamp = ${timestamp.toDate()}")
         FirebaseDataSource.addCourseToPromo(newCourse, promotion, uploadResult)
         uploadResult.value = Result.Loading()
     }
 
-    fun checkInputsEmpty(): Boolean {
+    private fun checkInputsEmpty(): Boolean {
         return if (subject.isEmpty() || professor.isEmpty() || promotion.isEmpty() || classroom.isEmpty() || day == null || time == null) {
-            Timber.i("upload: save aborted because at least a field is empty.")
             uploadResult.value = Result.Error(Exception("Error: A field isn't filled correctly"))
             true
         } else false
@@ -59,14 +55,15 @@ class AddCourseViewModel : ViewModel() {
     }
 
 
+    /**
+     * Getters / Setters (only needed ones)
+     */
     fun subject(newSubject: String) { subject = newSubject }
     fun professor(newProfessor: String) { professor = newProfessor }
     fun promotion(newPromotion: String) { promotion = newPromotion }
     fun classroom(newClassroom: String) { classroom = newClassroom }
-
     fun day(newDay: Calendar) { day = newDay }
     fun day(): Calendar{ return day ?: Calendar.getInstance() }
-
     fun time(newTime: Date) { time = newTime }
     fun time(): Date{ return time ?: Date() }
 }
