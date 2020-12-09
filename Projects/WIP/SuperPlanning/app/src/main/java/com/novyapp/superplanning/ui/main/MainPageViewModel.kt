@@ -6,13 +6,33 @@ import androidx.lifecycle.ViewModelProvider
 import com.google.firebase.database.MutableData
 import com.novyapp.superplanning.data.CourseV2
 import com.novyapp.superplanning.data.FirebaseDataSource
+import com.novyapp.superplanning.data.Result
+import com.novyapp.superplanning.todayWeekNumber
 import timber.log.Timber
 import java.lang.IllegalArgumentException
 
 class MainPageViewModel : ViewModel() {
 
-    val courses: MutableLiveData<HashMap<String, MutableList<CourseV2>>> =
-        FirebaseDataSource.getCoursesByPromo("TLS-INFO-B2-2020-2021")
+    //Assert not null cause no existingData parameter provided
+    val courses: MutableLiveData<Result<HashMap<String, MutableList<CourseV2>>>> =
+        FirebaseDataSource.getCoursesByPromo("TLS-INFO-B2-2020-2021")!!
+    private var weeksAfterToday = 1
+    private var weeksBeforeToday = 1
+
+    fun askForNewWeek(weekNumber: Int){
+        FirebaseDataSource.getCoursesByPromo(
+            "TLS-INFO-B2-2020-2021",
+            weekNumber.toString(),
+            courses
+        )
+    }
+
+    fun askForNextWeek() {
+        askForNewWeek(todayWeekNumber()+weeksAfterToday++)
+    }
+    fun askForPreviousWeek() {
+        askForNewWeek(todayWeekNumber()-weeksBeforeToday++)
+    }
 
 }
 

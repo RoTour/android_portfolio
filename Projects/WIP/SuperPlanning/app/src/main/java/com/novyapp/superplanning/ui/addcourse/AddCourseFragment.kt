@@ -176,7 +176,6 @@ class AddCourseFragment : Fragment() {
                                 )
                             }.timeInMillis))
                 binding.timePreviewValueTextView.text =
-//                    android.text.format.DateFormat.format("hh:mm", viewModel.time!!)
                     DateFormat.getTimeInstance(DateFormat.SHORT).format(viewModel.time())
             },
             now.get(Calendar.HOUR),

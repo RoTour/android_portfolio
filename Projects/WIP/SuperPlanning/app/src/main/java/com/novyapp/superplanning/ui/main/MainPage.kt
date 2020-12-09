@@ -6,14 +6,18 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.viewpager2.widget.ViewPager2
 import com.firebase.ui.auth.AuthUI
 import com.firebase.ui.auth.IdpResponse
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import com.novyapp.superplanning.R
+import com.novyapp.superplanning.data.Result
 import com.novyapp.superplanning.databinding.MainPageFragmentBinding
 import timber.log.Timber
 
@@ -25,6 +29,7 @@ class MainPage : Fragment() {
 
     private lateinit var db: FirebaseFirestore
     private lateinit var binding: MainPageFragmentBinding
+    var firstload = true
     private val viewModel by viewModels<MainPageViewModel> {
         MainPageViewModelFactory()
     }
@@ -45,14 +50,54 @@ class MainPage : Fragment() {
         val adapter = ViewPagerAdapter()
         binding.viewPager.adapter = adapter
 
-        viewModel.courses.observe(viewLifecycleOwner){
-            adapter.submitList(it)
+
+
+        viewModel.courses.observe(viewLifecycleOwner) {
+            if (it is Result.Success) {
+                Timber.i("newWeek: ${it.data}")
+                Timber.i("newWeek: SHOULD SUBMIT")
+                adapter.submitList(it.data)
+                if (firstload) {
+                    Timber.i("newWeek: First Load occurring")
+                    loadAdjacentWeeks()
+                    firstload = false
+                }
+            } else {
+                Toast.makeText(
+                    requireContext(),
+                    getString(R.string.error_getting_data),
+                    Toast.LENGTH_LONG
+                ).show()
+            }
         }
+
+        binding.viewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+            override fun onPageScrollStateChanged(state: Int) {
+                super.onPageScrollStateChanged(state)
+                if (state == ViewPager2.SCROLL_STATE_IDLE) {
+                    Timber.i("newWeek: PageSelected")
+                    loadAdjacentWeeks()
+                }
+            }
+        })
 
         return binding.root
     }
 
-
+    private fun loadAdjacentWeeks() {
+        if (!binding.viewPager.canScrollHorizontally(1)) {
+            Timber.i("newWeek: CANT scroll to right")
+            viewModel.askForNextWeek()
+        } else {
+            Timber.i("newWeek: Can scroll right")
+        }
+        if (!binding.viewPager.canScrollHorizontally(-1)) {
+            Timber.i("newWeek: CANT scroll to left")
+            viewModel.askForPreviousWeek()
+        } else {
+            Timber.i("newWeek: Can scroll left")
+        }
+    }
 
     private fun launchSignInFlow() {
         val providers = arrayListOf(

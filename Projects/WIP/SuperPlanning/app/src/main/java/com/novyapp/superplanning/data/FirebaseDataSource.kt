@@ -24,24 +24,29 @@ object FirebaseDataSource {
 
     fun getCoursesByPromo(
         promo: String,
-        weekNumber: String = todayWeekNumber().toString()
-    ): MutableLiveData<HashMap<String, MutableList<CourseV2>>> {
+        weekNumber: String = todayWeekNumber().toString(),
+        existingData: MutableLiveData<Result<HashMap<String, MutableList<CourseV2>>>>? = null
+    ): MutableLiveData<Result<HashMap<String, MutableList<CourseV2>>>>? {
 
-        val result = MutableLiveData<HashMap<String, MutableList<CourseV2>>>()
-        val resultBuilder = HashMap<String, MutableList<CourseV2>>()
+        val result =
+            if (existingData != null) null
+            else MutableLiveData<Result<HashMap<String, MutableList<CourseV2>>>>()
 
         db.collection("/Courses/$promo/$weekNumber")
             .get()
             .addOnSuccessListener { response ->
+                val resultBuilder = (existingData?.value as Result.Success?)?.data ?: HashMap()
                 resultBuilder[weekNumber] = mutableListOf()
                 response.documents.forEach { document ->
                     resultBuilder[weekNumber]!!.add(document.toCourseV2())
                     Timber.i("mainPage: ${document.data}")
                 }
-                result.value = resultBuilder
+                existingData?.let { it.value = Result.Success(resultBuilder) }
+                    ?: run { result!!.value = Result.Success(resultBuilder) }
             }
             .addOnFailureListener { e ->
                 Timber.i("mainPage: $e")
+                result?.let { it.value = Result.Error(e) }
             }
 
         return result

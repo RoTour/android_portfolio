@@ -22,4 +22,5 @@
     <string name="select_promotion_button">Select promotion…</string>
     <string name="select_classroom_button">Select classroom…</string>
     <string name="empty_select">"Select "</string>
+    <string name="error_getting_data">An error occured. Please try again later.</string>
 </resources>

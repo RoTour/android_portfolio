@@ -16,12 +16,13 @@ class CourseListAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     companion object {
         const val COURSE_VIEW = 1
         const val SEPARATOR_VIEW = 2
+        const val EMPTY_WEEK = 3
     }
 
     private val list: ArrayList<CourseListViews> = arrayListOf()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        return when(viewType){
+        return when (viewType) {
             COURSE_VIEW -> CourseListItemViewHolder.from(parent)
             else -> CourseListSeparatorViewHolder.from(parent)
         }
@@ -29,10 +30,10 @@ class CourseListAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        if(getItemViewType(position) == COURSE_VIEW){
-            (holder as CourseListItemViewHolder).bind(list[position].value as CourseV2)
-        } else {
-            (holder as CourseListSeparatorViewHolder).bind(list[position].value as String)
+        when(getItemViewType(position)){
+            COURSE_VIEW -> (holder as CourseListItemViewHolder).bind(list[position].value as CourseV2)
+            SEPARATOR_VIEW -> (holder as CourseListSeparatorViewHolder).bind(list[position].value as String)
+            else -> (holder as CourseListSeparatorViewHolder).bind(list[position].value as String)
         }
     }
 
@@ -45,31 +46,44 @@ class CourseListAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     }
 
 
-    fun submitList(newList:  MutableList<CourseV2>){
+    fun submitList(newList: MutableList<CourseV2>) {
         list.clear()
+
         /**
          * Courses ordered by DAY : "Day" to List<CourseV2>
          */
-        val orderedCourses: LinkedHashMap<String, MutableList<CourseV2>> = LinkedHashMap()
-        newList.sortBy { it.date }
 
-        newList.forEach {
-            val key = DateFormat.getDateInstance(DateFormat.LONG).format(it.date?.toDate() ?: Date())
-            if(!orderedCourses.containsKey(key)) orderedCourses[key] = mutableListOf()
-            orderedCourses[key]!!.add(it)
-        }
-        orderedCourses.forEach { (key, sublist) ->
-            list.add(CourseListViews(SEPARATOR_VIEW, key))
-            sublist.forEach { course -> list.add(CourseListViews(COURSE_VIEW, course)) }
+        if (newList.isEmpty()) {
+//            TODO("Display the week instead of hard coded message")
+            list.add(
+                CourseListViews(
+                    EMPTY_WEEK,
+                    "No Course this week"
+                )
+            )
+        } else {
+            val orderedCourses: LinkedHashMap<String, MutableList<CourseV2>> = LinkedHashMap()
+            newList.sortBy { it.date }
+
+            newList.forEach {
+                val key =
+                    DateFormat.getDateInstance(DateFormat.LONG).format(it.date?.toDate() ?: Date())
+                if (!orderedCourses.containsKey(key)) orderedCourses[key] = mutableListOf()
+                orderedCourses[key]!!.add(it)
+            }
+
+            orderedCourses.forEach { (key, sublist) ->
+                list.add(CourseListViews(SEPARATOR_VIEW, key))
+
+                sublist.forEach { course -> list.add(CourseListViews(COURSE_VIEW, course)) }
+            }
         }
         notifyDataSetChanged()
     }
 
 
-
-
     class CourseListItemViewHolder private constructor(
-            private val binding: CourseListItemBinding
+        private val binding: CourseListItemBinding
     ) : RecyclerView.ViewHolder(binding.root) {
         fun bind(item: CourseV2?) {
             item?.let {
@@ -88,9 +102,9 @@ class CourseListAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     }
 
     class CourseListSeparatorViewHolder private constructor(
-            private val binding: CourseListSeparatorBinding
-    ): RecyclerView.ViewHolder(binding.root) {
-        fun bind(item: String?){
+        private val binding: CourseListSeparatorBinding
+    ) : RecyclerView.ViewHolder(binding.root) {
+        fun bind(item: String?) {
             item?.let {
                 binding.separatorDate = it
             }
@@ -104,5 +118,7 @@ class CourseListAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
             }
         }
     }
+
+
 
 }

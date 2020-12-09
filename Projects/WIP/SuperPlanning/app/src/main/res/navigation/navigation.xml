@@ -8,7 +8,7 @@
     <fragment
         android:id="@+id/timetable"
         android:name="com.novyapp.superplanning.ui.main.MainPage"
-        android:label="Ultraplanning"
+        android:label="Superplanning"
         tools:layout="@layout/main_page_fragment" />
     <fragment
         android:id="@+id/addCourse"

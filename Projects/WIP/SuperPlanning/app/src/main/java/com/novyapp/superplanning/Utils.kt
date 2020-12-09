@@ -1,6 +1,7 @@
 package com.novyapp.superplanning
 
 import timber.log.Timber
+import java.lang.IllegalArgumentException
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -28,18 +29,15 @@ fun String.fromISOtoCalendar(): Calendar {
     return cal
 }
 
-fun findNextIntBiggerThan(number: String, keys: MutableSet<String>): String {
-    keys.forEach { key ->
-        var value = key
-        if(key.toInt() <= 34) value+=52
-        if(value.toInt() >= number.toInt()) return key
-    }
-    Timber.e("ERROR IN findNextIntBiggerThan : provided number is greater than greatest value in provided set")
-    return "-1"
+fun Int.nextWeekNumber(): Int{
+    if(this <= 0 || this > 52) throw IllegalArgumentException("WeekNumber should be in 0 < WeekNumber <= 52")
+    return if(this!=52)  this+1 else 1
 }
-//fun CharSequence.fromISOtoNice(): String {
-//    return "${this.substring(0,3)}/${this.substring(5,6)}/${this.substring(7,8)}"
-//}
+
+fun Int.previousWeekNumber(): Int{
+    if(this <= 0 || this > 52) throw IllegalArgumentException("WeekNumber should be in 0 < WeekNumber <= 52")
+    return if(this!=1)  this-1 else 52
+}
 
 fun todayWeekNumber(): Int {
     return Calendar.getInstance().get(Calendar.WEEK_OF_YEAR)

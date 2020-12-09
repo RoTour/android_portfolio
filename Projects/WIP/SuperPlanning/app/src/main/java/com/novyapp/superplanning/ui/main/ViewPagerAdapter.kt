@@ -5,6 +5,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.novyapp.superplanning.data.CourseV2
 import com.novyapp.superplanning.databinding.PagerItemBinding
+import timber.log.Timber
 
 class ViewPagerAdapter : RecyclerView.Adapter<ViewPagerAdapter.WeekRecyclerViewViewHolder>() {
 
@@ -25,9 +26,19 @@ class ViewPagerAdapter : RecyclerView.Adapter<ViewPagerAdapter.WeekRecyclerViewV
         return adapterList.size
     }
 
-    fun submitList(data: HashMap<String, MutableList<CourseV2>>) {
-        adapterList.clear()
+    fun submitList(data: HashMap<String, MutableList<CourseV2>>, forceClear: Boolean = false) {
+//        Timber.i("newWeek: IS SUBMITTING")
+//        Timber.i("newWeek: data: $data")
+
+        if(forceClear) adapterList.clear()
+
         adapterList = data
+//        data.forEach { (t, u) ->
+//            Timber.i("newWeek: New Week: $t")
+//            u.forEach {
+//                Timber.i("newWeek: Course: ${it.subject}")
+//            }
+//        }
         notifyDataSetChanged()
     }
 
