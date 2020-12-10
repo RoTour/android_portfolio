@@ -46,26 +46,26 @@ class CourseListAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     }
 
 
-    fun submitList(newList: MutableList<CourseV2>) {
+    fun submitList(newList: Pair<String, MutableList<CourseV2>>) {
         list.clear()
 
         /**
          * Courses ordered by DAY : "Day" to List<CourseV2>
          */
 
-        if (newList.isEmpty()) {
+        if (newList.second.isEmpty()) {
 //            TODO("Display the week instead of hard coded message")
             list.add(
                 CourseListViews(
                     EMPTY_WEEK,
-                    "No Course this week"
+                    "No Courses on week ${newList.first}"
                 )
             )
         } else {
             val orderedCourses: LinkedHashMap<String, MutableList<CourseV2>> = LinkedHashMap()
-            newList.sortBy { it.date }
+            newList.second.sortBy { it.date }
 
-            newList.forEach {
+            newList.second.forEach {
                 val key =
                     DateFormat.getDateInstance(DateFormat.LONG).format(it.date?.toDate() ?: Date())
                 if (!orderedCourses.containsKey(key)) orderedCourses[key] = mutableListOf()

@@ -19,6 +19,7 @@ import com.google.firebase.ktx.Firebase
 import com.novyapp.superplanning.R
 import com.novyapp.superplanning.data.Result
 import com.novyapp.superplanning.databinding.MainPageFragmentBinding
+import com.novyapp.superplanning.toSortedByWeeksMap
 import timber.log.Timber
 
 private const val REQUEST_CODE = 12
@@ -47,7 +48,7 @@ class MainPage : Fragment() {
             Timber.i("User is already connected")
         }
 
-        val adapter = ViewPagerAdapter()
+        val adapter = ViewPagerListAdapter()
         binding.viewPager.adapter = adapter
 
 
@@ -56,7 +57,7 @@ class MainPage : Fragment() {
             if (it is Result.Success) {
                 Timber.i("newWeek: ${it.data}")
                 Timber.i("newWeek: SHOULD SUBMIT")
-                adapter.submitList(it.data)
+                adapter.submitList(it.data.toSortedByWeeksMap().toList())
                 if (firstload) {
                     Timber.i("newWeek: First Load occurring")
                     loadAdjacentWeeks()
@@ -130,3 +131,4 @@ class MainPage : Fragment() {
     }
 
 }
+

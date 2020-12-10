@@ -11,6 +11,7 @@ import com.novyapp.superplanning.todayWeekNumber
 import timber.log.Timber
 import java.util.*
 import kotlin.collections.HashMap
+import kotlin.collections.LinkedHashMap
 
 object FirebaseDataSource {
 
@@ -25,17 +26,17 @@ object FirebaseDataSource {
     fun getCoursesByPromo(
         promo: String,
         weekNumber: String = todayWeekNumber().toString(),
-        existingData: MutableLiveData<Result<HashMap<String, MutableList<CourseV2>>>>? = null
-    ): MutableLiveData<Result<HashMap<String, MutableList<CourseV2>>>>? {
+        existingData: MutableLiveData<Result<LinkedHashMap<String, MutableList<CourseV2>>>>? = null
+    ): MutableLiveData<Result<LinkedHashMap<String, MutableList<CourseV2>>>>? {
 
         val result =
             if (existingData != null) null
-            else MutableLiveData<Result<HashMap<String, MutableList<CourseV2>>>>()
+            else MutableLiveData<Result<LinkedHashMap<String, MutableList<CourseV2>>>>()
 
         db.collection("/Courses/$promo/$weekNumber")
             .get()
             .addOnSuccessListener { response ->
-                val resultBuilder = (existingData?.value as Result.Success?)?.data ?: HashMap()
+                val resultBuilder = (existingData?.value as Result.Success?)?.data ?: LinkedHashMap()
                 resultBuilder[weekNumber] = mutableListOf()
                 response.documents.forEach { document ->
                     resultBuilder[weekNumber]!!.add(document.toCourseV2())
